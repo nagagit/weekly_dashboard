@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -87,7 +85,8 @@ public class RulesImpl implements Rules {
 								.replace("^", ""));
 						setUpdateColIndex(newColumnCell.getColumnIndex());
 						setNewUpdCol(Boolean.TRUE);
-					} else if (getRowCountColIndex() == -1
+					}
+					if (getRowCountColIndex() == -1
 							&& rule.getCount() != null
 							&& cell.getStringCellValue().equals(
 									rule.getCount().getCountFromCol())) {
@@ -95,7 +94,7 @@ public class RulesImpl implements Rules {
 					}
 				}
 			} else if (row.isFormatted()
-					&& row.getCell(getFilterColIndex()) != null) {
+					|| row.getCell(getFilterColIndex()) != null) {
 				if (filter.getValuesToFilter().size() == 1) {
 					String valueToFilter = filter.getValuesToFilter().get(0);
 					int filterColCellType = row.getCell(getFilterColIndex())
@@ -131,6 +130,24 @@ public class RulesImpl implements Rules {
 
 			}
 		}
+		Sheet countOnSheet = DashboardUtility.getSheet(rule.getCount()
+				.getCountOnSheet(), filterWorkbook);
+		Row row = null;
+		Cell dateCell = null;
+		Cell highPriority = null;
+		Cell mediumPriority = null;
+		Cell lowPriority = null;
+		for (Date createDate : storeCountMap.keySet()) {
+			row = countOnSheet.createRow(countOnSheet.getLastRowNum());
+			dateCell = row.createCell(1);
+			dateCell.setCellValue(createDate);
+			highPriority = row.createCell(2);
+			highPriority.setCellValue(storeCountMap.get(createDate).get(0));
+			mediumPriority = row.createCell(3);
+			mediumPriority.setCellValue(storeCountMap.get(createDate).get(1));
+			lowPriority = row.createCell(4);
+			lowPriority.setCellValue(storeCountMap.get(createDate).get(2));
+		}
 		setFilterColIndex(-1);
 		setUpdateColIndex(-1);
 		writeBack(filter, filterWorkbook);
@@ -157,13 +174,16 @@ public class RulesImpl implements Rules {
 			}
 		} else {
 			priorities = new LinkedList<Integer>();
+			priorities.add(0);
+			priorities.add(0);
+			priorities.add(0);
 			if (row.getCell(getRowCountColIndex()).getStringCellValue()
 					.toLowerCase().contains(high)) {
 				priorities.set(0, priorities.get(0) + 1);
-			} else if (row.getCell(getRowCountColIndex()).getStringCellValue()
+			} else if (row.getCell(getRowCountColIndex()).getStringCellValue().toLowerCase()
 					.contains(medium)) {
 				priorities.set(1, priorities.get(1) + 1);
-			} else if (row.getCell(getRowCountColIndex()).getStringCellValue()
+			} else if (row.getCell(getRowCountColIndex()).getStringCellValue().toLowerCase()
 					.contains(low)) {
 				priorities.set(2, priorities.get(2) + 1);
 			}
@@ -203,7 +223,6 @@ public class RulesImpl implements Rules {
 		}
 	}
 
-	
 	public void copyData(Rule rule) throws IOException, BiffException {
 		Workbook workbook = null;
 		CellStyle cellStyle = null;
@@ -342,19 +361,16 @@ public class RulesImpl implements Rules {
 		fileOutputStream.close();
 	}
 
-	
 	public void formatColumn(Rule rule) {
 		// TODO Auto-generated method stub
 
 	}
 
-	
 	public void executeMacro(Rule rule) throws IOException,
 			InterruptedException {
 		executeProcess(rule.getExecuteMacro().getScriptName());
 	}
 
-	
 	public void evaluateFormula(Rule rule) throws IOException {
 		HSSFWorkbook evalFrmWB = (HSSFWorkbook) DashboardUtility
 				.getWorkBook(DashboardConstants.wbURLMap.get(rule
@@ -406,7 +422,6 @@ public class RulesImpl implements Rules {
 		outputStream.close();
 	}
 
-	
 	public void deleteData(Rule rule) {
 		// TODO Auto-generated method stub
 

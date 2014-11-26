@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listContainer>
 	<items>
-		<rule>
+		<!-- <rule>
 			<executeMacro>
 				<onFile>Daily_Release_Dashboard.xlsm</onFile>
 				<scriptName>makeacopy.vbs</scriptName>
@@ -167,14 +167,14 @@
 				<scriptName>saveAsXls.vbs</scriptName>
 			</executeMacro>
 			<type>ExecuteMacro</type>
-		</rule>
- 	<!--
+		</rule> -->
+ 	
 		<rule>
 			<filter>
 				<colToFilter>Created Date</colToFilter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
 				<filterColADate>true</filterColADate>
-				<sheetToFilter>0</sheetToFilter>
+				<sheetToFilter>Daily Data</sheetToFilter>
 				<values>
 					<valuesToFilter>>today-7</valuesToFilter>
 				</values>
@@ -185,12 +185,13 @@
 				<valueToUpdate>Inflow</valueToUpdate>
 			</update>
 			<count>
+				<countOnSheet>Weekly_Run_Rate</countOnSheet>
 				<countFromCol>Priority</countFromCol>
 				<countForValues>1-High,2-Medium,3-Low</countForValues>
 				<storeCountInMap>true</storeCountInMap>
 			</count>
 		</rule>
-
+<!--
 		<rule>
 			<type>Update</type>
 			<update>

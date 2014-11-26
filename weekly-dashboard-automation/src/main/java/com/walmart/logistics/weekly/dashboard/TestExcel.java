@@ -31,7 +31,7 @@ public class TestExcel {
 			InvalidFormatException, BiffException, InterruptedException {
 		int ruleIndex = 1;
 		// HSSFWorkbook, File
-		Class[] classes = new Class[] { ListContainer.class };
+		Class[] classes = new Class[] { ListContainer.class, Rule.class };
 		JAXBContext context = JAXBContext.newInstance(classes);
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		ListContainer<Rule> listContainer = (ListContainer<Rule>) unmarshaller

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "rule")
 public class Rule implements Serializable {
 	/**
 	 * serialVersionUID
@@ -165,7 +165,8 @@ public class Rule implements Serializable {
 	}
 
 	/**
-	 * @param isFilterColADate the isFilterColADate to set
+	 * @param isFilterColADate
+	 *            the isFilterColADate to set
 	 */
 	public void setFilterColADate(boolean isFilterColADate) {
 		this.isFilterColADate = isFilterColADate;
@@ -179,7 +180,8 @@ public class Rule implements Serializable {
 	}
 
 	/**
-	 * @param count the count to set
+	 * @param count
+	 *            the count to set
 	 */
 	public void setCount(RowCount count) {
 		this.count = count;

@@ -11,6 +11,7 @@ public class RowCount {
 	private String countFromCol;
 	private String countForValues;
 	private boolean storeCountInMap;
+	private String countOnSheet;
 
 	/**
 	 * @return the countFromCol
@@ -54,6 +55,20 @@ public class RowCount {
 	 */
 	public void setStoreCountInMap(boolean storeCountInMap) {
 		this.storeCountInMap = storeCountInMap;
+	}
+
+	/**
+	 * @return the countOnSheet
+	 */
+	public String getCountOnSheet() {
+		return countOnSheet;
+	}
+
+	/**
+	 * @param countOnSheet the countOnSheet to set
+	 */
+	public void setCountOnSheet(String countOnSheet) {
+		this.countOnSheet = countOnSheet;
 	}
 
 }
