@@ -110,7 +110,7 @@ public class RulesImpl implements Rules {
 					} else if (filter.isFilterColADate()) {
 						Calendar calendar = Calendar.getInstance();
 						calendar.set(Calendar.DAY_OF_MONTH,
-								Integer.parseInt(valueToFilter.split("-")[1]));
+								-Integer.parseInt(valueToFilter.split("-")[1]));
 						if (row.getCell(getFilterColIndex()).getDateCellValue()
 								.after(calendar.getTime())) {
 							setCellValue(row);
@@ -180,11 +180,11 @@ public class RulesImpl implements Rules {
 			if (row.getCell(getRowCountColIndex()).getStringCellValue()
 					.toLowerCase().contains(high)) {
 				priorities.set(0, priorities.get(0) + 1);
-			} else if (row.getCell(getRowCountColIndex()).getStringCellValue().toLowerCase()
-					.contains(medium)) {
+			} else if (row.getCell(getRowCountColIndex()).getStringCellValue()
+					.toLowerCase().contains(medium)) {
 				priorities.set(1, priorities.get(1) + 1);
-			} else if (row.getCell(getRowCountColIndex()).getStringCellValue().toLowerCase()
-					.contains(low)) {
+			} else if (row.getCell(getRowCountColIndex()).getStringCellValue()
+					.toLowerCase().contains(low)) {
 				priorities.set(2, priorities.get(2) + 1);
 			}
 		}
@@ -541,19 +541,10 @@ public class RulesImpl implements Rules {
 	}
 
 	public static void main(String[] args) {
-		File file = new File("src/main/resources/" + "makeacopy.vbs");
-		Process p = null;
-		String[] cmd = { "wscript", "\"", file.getAbsolutePath(), "\"" };
-		int processOutputCode = 0;
-		try {
-			p = Runtime.getRuntime().exec(cmd);
-			processOutputCode = p.waitFor();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, 3);
+		System.out.println(calendar.getTime());
+
 	}
 
 	/**
