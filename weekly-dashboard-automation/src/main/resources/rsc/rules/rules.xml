@@ -1,174 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listContainer>
 	<items>
-		<!-- <rule>
-			<executeMacro>
-				<onFile>Daily_Release_Dashboard.xlsm</onFile>
-				<scriptName>makeacopy.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule>
-		<rule>
-			<filter>
-				<colToFilter>Defect Root Cause</colToFilter>
-				<fileToFilter>DefectsReport.xls</fileToFilter>
-				<sheetToFilter>0</sheetToFilter>
-				<values>
-					<valuesToFilter>Blanks</valuesToFilter>
-				</values>
-			</filter>
-			<type>FilterAndUpdate</type>
-			<update>
-				<colToUpdate>RCA Completed</colToUpdate>
-				<valueToUpdate>N</valueToUpdate>
-			</update>
-		</rule>
-		<rule>
-			<filter>
-				<colToFilter>Defect Root Cause</colToFilter>
-				<fileToFilter>DefectsReport.xls</fileToFilter>
-				<sheetToFilter>0</sheetToFilter>
-				<values>
-					<valuesToFilter>!Blanks</valuesToFilter>
-				</values>
-			</filter>
-			<type>FilterAndUpdate</type>
-			<update>
-				<colToUpdate>RCA Completed</colToUpdate>
-				<valueToUpdate>Y</valueToUpdate>
-			</update>
-		</rule>
-		<rule>
-			<filter>
-				<colToFilter>Team</colToFilter>
-				<fileToFilter>DefectsReport.xls</fileToFilter>
-				<sheetToFilter>0</sheetToFilter>
-				<values>
-					<valuesToFilter>ISD</valuesToFilter>
-					<valuesToFilter>eDC</valuesToFilter>
-					<valuesToFilter>WFM</valuesToFilter>
-					<valuesToFilter>Upstreaming</valuesToFilter>
-					<valuesToFilter>Japan</valuesToFilter>
-					<valuesToFilter>YMS</valuesToFilter>
-					<valuesToFilter>GLS</valuesToFilter>
-				</values>
-			</filter>
-			<type>FilterAndUpdate</type>
-			<update>
-				<colToUpdate>RCA Completed</colToUpdate>
-				<valueToUpdate>*</valueToUpdate>
-			</update>
-		</rule>
-		<rule>
-			<filter>
-				<colToFilter>Team</colToFilter>
-				<fileToFilter>DefectsReport.xls</fileToFilter>
-				<sheetToFilter>0</sheetToFilter>
-				<values>
-					<valuesToFilter>OP</valuesToFilter>
-					<valuesToFilter>T1</valuesToFilter>
-					<valuesToFilter>Track 3</valuesToFilter>
-					<valuesToFilter>UI .Net</valuesToFilter>
-					<valuesToFilter>Testing</valuesToFilter>
-					<valuesToFilter>QA</valuesToFilter>
-					<valuesToFilter>BzTax</valuesToFilter>
-					<valuesToFilter>MF</valuesToFilter>
-					<valuesToFilter>ISD</valuesToFilter>
-					<valuesToFilter>T1 Receiving</valuesToFilter>
-					<valuesToFilter>Track 2</valuesToFilter>
-					<valuesToFilter>T1 Invoicing</valuesToFilter>
-					<valuesToFilter>Brazil Perishable</valuesToFilter>
-					<valuesToFilter>IntlGaps</valuesToFilter>
-					<valuesToFilter>IntlExtn</valuesToFilter>
-					<valuesToFilter>China Gaps</valuesToFilter>
-					<valuesToFilter>IntlImports</valuesToFilter>
-					<valuesToFilter>AGV</valuesToFilter>
-					<valuesToFilter>IndiaGaps</valuesToFilter>
-					<valuesToFilter>EFB</valuesToFilter>
-					<valuesToFilter>Java</valuesToFilter>
-					<valuesToFilter>eDC</valuesToFilter>
-					<valuesToFilter>WFM</valuesToFilter>
-					<valuesToFilter>Upstreaming</valuesToFilter>
-					<valuesToFilter>MX Perishables</valuesToFilter>
-					<valuesToFilter>Japan</valuesToFilter>
-					<valuesToFilter>YMS</valuesToFilter>
-				</values>
-			</filter>
-			<type>FilterAndUpdate</type>
-			<update>
-				<colToUpdate>^Module</colToUpdate>
-				<valueToUpdate>*</valueToUpdate>
-			</update>
-		</rule>
-		
-		<rule>
-			<executeMacro>
-				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-				<scriptName>copyLookup.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule>
- 		<rule>
-			<executeMacro>
-				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-				<scriptName>saveAsXls.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule>
-		
-		<rule>
-			<evaluateFormula>
-				<fromFile>Mini_Dashboard.xls</fromFile>
-				<fromSheet>Daily Data</fromSheet>
-				<cell>
-					<header>RCA</header>
-					<formula>VLOOKUP(C:C,Lookup!A:B,2,0)</formula>
-					<cellType>String</cellType>
-				</cell>
-				<cell>
-					<header>RCA Age</header>
-					<formula>NOW()-D3-1</formula>
-					<cellType>Date</cellType>
-				</cell>
-			</evaluateFormula>
-			<type>EvaluateFormula</type>
-		</rule>
-		<rule>
-			<executeMacro>
-				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-				<scriptName>saveAsXlsx.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule>
-		 <rule>
-			<executeMacro>
-				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-				<scriptName>deleteData.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule>
-		<rule>
-			<executeMacro>
-				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-				<scriptName>copyBase.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule>
-		<rule>
-			<executeMacro>
-				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-				<scriptName>triggerReleasemacro.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule>
-		<rule>
-			<executeMacro>
-				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-				<scriptName>saveAsXls.vbs</scriptName>
-			</executeMacro>
-			<type>ExecuteMacro</type>
-		</rule> -->
- 	
+		<!-- <rule> <executeMacro> <onFile>Daily_Release_Dashboard.xlsm</onFile> 
+			<scriptName>makeacopy.vbs</scriptName> </executeMacro> <type>ExecuteMacro</type> 
+			</rule> <rule> <filter> <colToFilter>Defect Root Cause</colToFilter> <fileToFilter>DefectsReport.xls</fileToFilter> 
+			<sheetToFilter>0</sheetToFilter> <values> <valuesToFilter>Blanks</valuesToFilter> 
+			</values> </filter> <type>FilterAndUpdate</type> <update> <colToUpdate>RCA 
+			Completed</colToUpdate> <valueToUpdate>N</valueToUpdate> </update> </rule> 
+			<rule> <filter> <colToFilter>Defect Root Cause</colToFilter> <fileToFilter>DefectsReport.xls</fileToFilter> 
+			<sheetToFilter>0</sheetToFilter> <values> <valuesToFilter>!Blanks</valuesToFilter> 
+			</values> </filter> <type>FilterAndUpdate</type> <update> <colToUpdate>RCA 
+			Completed</colToUpdate> <valueToUpdate>Y</valueToUpdate> </update> </rule> 
+			<rule> <filter> <colToFilter>Team</colToFilter> <fileToFilter>DefectsReport.xls</fileToFilter> 
+			<sheetToFilter>0</sheetToFilter> <values> <valuesToFilter>ISD</valuesToFilter> 
+			<valuesToFilter>eDC</valuesToFilter> <valuesToFilter>WFM</valuesToFilter> 
+			<valuesToFilter>Upstreaming</valuesToFilter> <valuesToFilter>Japan</valuesToFilter> 
+			<valuesToFilter>YMS</valuesToFilter> <valuesToFilter>GLS</valuesToFilter> 
+			</values> </filter> <type>FilterAndUpdate</type> <update> <colToUpdate>RCA 
+			Completed</colToUpdate> <valueToUpdate>*</valueToUpdate> </update> </rule> 
+			<rule> <filter> <colToFilter>Team</colToFilter> <fileToFilter>DefectsReport.xls</fileToFilter> 
+			<sheetToFilter>0</sheetToFilter> <values> <valuesToFilter>OP</valuesToFilter> 
+			<valuesToFilter>T1</valuesToFilter> <valuesToFilter>Track 3</valuesToFilter> 
+			<valuesToFilter>UI .Net</valuesToFilter> <valuesToFilter>Testing</valuesToFilter> 
+			<valuesToFilter>QA</valuesToFilter> <valuesToFilter>BzTax</valuesToFilter> 
+			<valuesToFilter>MF</valuesToFilter> <valuesToFilter>ISD</valuesToFilter> 
+			<valuesToFilter>T1 Receiving</valuesToFilter> <valuesToFilter>Track 2</valuesToFilter> 
+			<valuesToFilter>T1 Invoicing</valuesToFilter> <valuesToFilter>Brazil Perishable</valuesToFilter> 
+			<valuesToFilter>IntlGaps</valuesToFilter> <valuesToFilter>IntlExtn</valuesToFilter> 
+			<valuesToFilter>China Gaps</valuesToFilter> <valuesToFilter>IntlImports</valuesToFilter> 
+			<valuesToFilter>AGV</valuesToFilter> <valuesToFilter>IndiaGaps</valuesToFilter> 
+			<valuesToFilter>EFB</valuesToFilter> <valuesToFilter>Java</valuesToFilter> 
+			<valuesToFilter>eDC</valuesToFilter> <valuesToFilter>WFM</valuesToFilter> 
+			<valuesToFilter>Upstreaming</valuesToFilter> <valuesToFilter>MX Perishables</valuesToFilter> 
+			<valuesToFilter>Japan</valuesToFilter> <valuesToFilter>YMS</valuesToFilter> 
+			</values> </filter> <type>FilterAndUpdate</type> <update> <colToUpdate>^Module</colToUpdate> 
+			<valueToUpdate>*</valueToUpdate> </update> </rule> <rule> <executeMacro> 
+			<onFile>weekly_dashboard_macrobook.xlsb</onFile> <scriptName>copyLookup.vbs</scriptName> 
+			</executeMacro> <type>ExecuteMacro</type> </rule> <rule> <executeMacro> <onFile>weekly_dashboard_macrobook.xlsb</onFile> 
+			<scriptName>saveAsXls.vbs</scriptName> </executeMacro> <type>ExecuteMacro</type> 
+			</rule> <rule> <evaluateFormula> <fromFile>Mini_Dashboard.xls</fromFile> 
+			<fromSheet>Daily Data</fromSheet> <cell> <header>RCA</header> <formula>VLOOKUP(C:C,Lookup!A:B,2,0)</formula> 
+			<cellType>String</cellType> </cell> <cell> <header>RCA Age</header> <formula>NOW()-D3-1</formula> 
+			<cellType>Date</cellType> </cell> </evaluateFormula> <type>EvaluateFormula</type> 
+			</rule> <rule> <executeMacro> <onFile>weekly_dashboard_macrobook.xlsb</onFile> 
+			<scriptName>saveAsXlsx.vbs</scriptName> </executeMacro> <type>ExecuteMacro</type> 
+			</rule> <rule> <executeMacro> <onFile>weekly_dashboard_macrobook.xlsb</onFile> 
+			<scriptName>deleteData.vbs</scriptName> </executeMacro> <type>ExecuteMacro</type> 
+			</rule> <rule> <executeMacro> <onFile>weekly_dashboard_macrobook.xlsb</onFile> 
+			<scriptName>copyBase.vbs</scriptName> </executeMacro> <type>ExecuteMacro</type> 
+			</rule> <rule> <executeMacro> <onFile>weekly_dashboard_macrobook.xlsb</onFile> 
+			<scriptName>triggerReleasemacro.vbs</scriptName> </executeMacro> <type>ExecuteMacro</type> 
+			</rule> <rule> <executeMacro> <onFile>weekly_dashboard_macrobook.xlsb</onFile> 
+			<scriptName>saveAsXls.vbs</scriptName> </executeMacro> <type>ExecuteMacro</type> 
+			</rule> -->
 		<rule>
 			<filter>
 				<colToFilter>Created Date</colToFilter>
@@ -176,7 +60,7 @@
 				<filterColADate>true</filterColADate>
 				<sheetToFilter>Daily Data</sheetToFilter>
 				<values>
-					<valuesToFilter>>today-7</valuesToFilter>
+					<valuesToFilter>>today-13</valuesToFilter>
 				</values>
 			</filter>
 			<type>FilterAndUpdate</type>
@@ -191,8 +75,7 @@
 				<storeCountInMap>true</storeCountInMap>
 			</count>
 		</rule>
-<!--
-		<rule>
+		<!-- <rule>
 			<type>Update</type>
 			<update>
 				<colToUpdate>Type</colToUpdate>
@@ -200,6 +83,6 @@
 				<sheetToUpdate>Weekly_Run_Rate</sheetToUpdate>
 				<updateRowCntFromMap>true</updateRowCntFromMap>
 			</update>
-		</rule>
- -->	</items>
+		</rule> -->
+	</items>
 </listContainer>

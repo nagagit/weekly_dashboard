@@ -42,6 +42,7 @@ public class RulesImpl implements Rules {
 	private Rule rule;
 	private List<Integer> toEvalColIndexes;
 	private boolean breaker;
+	private boolean wbChanged;
 
 	/**
 	 * Filter-DefectsReport.xls|1|Defect Root
@@ -53,6 +54,7 @@ public class RulesImpl implements Rules {
 		setRule(rule);
 		Filter filter = rule.getFilter();
 		Update update = rule.getUpdate();
+		Date createdDate = null;
 		Map<Date, List<Integer>> storeCountMap = new HashMap<Date, List<Integer>>();
 		HSSFWorkbook filterWorkbook = (HSSFWorkbook) DashboardUtility
 				.getWorkBook(DashboardConstants.wbURLMap.get(filter
@@ -60,8 +62,7 @@ public class RulesImpl implements Rules {
 		Sheet filterSheet = DashboardUtility.getSheet(
 				filter.getSheetToFilter(), filterWorkbook);
 		for (Row row : filterSheet) {
-			if (row.isFormatted() && getFilterColIndex() == -1
-					&& getUpdateColIndex() == -1) {
+			if (getFilterColIndex() == -1 && getUpdateColIndex() == -1) {
 				Cell cell;
 				String tempCell = update.getColToUpdate().replace("^", "");
 				for (Iterator<Cell> iterator = row.iterator(); iterator
@@ -93,8 +94,7 @@ public class RulesImpl implements Rules {
 						setRowCountColIndex(cell.getColumnIndex());
 					}
 				}
-			} else if (row.isFormatted()
-					|| row.getCell(getFilterColIndex()) != null) {
+			} else if (row.getCell(getFilterColIndex()) != null) {
 				if (filter.getValuesToFilter().size() == 1) {
 					String valueToFilter = filter.getValuesToFilter().get(0);
 					int filterColCellType = row.getCell(getFilterColIndex())
@@ -108,11 +108,14 @@ public class RulesImpl implements Rules {
 							&& filterColCellType != Cell.CELL_TYPE_BLANK) {
 						setCellValue(row);
 					} else if (filter.isFilterColADate()) {
-						Calendar calendar = Calendar.getInstance();
-						calendar.set(Calendar.DAY_OF_MONTH,
-								-Integer.parseInt(valueToFilter.split("-")[1]));
+						if (createdDate == null) {
+							Calendar calendar = Calendar.getInstance();
+							calendar.add(Calendar.DATE, -Integer
+									.parseInt(valueToFilter.split("-")[1]));
+							createdDate = calendar.getTime();
+						}
 						if (row.getCell(getFilterColIndex()).getDateCellValue()
-								.after(calendar.getTime())) {
+								.after(createdDate)) {
 							setCellValue(row);
 							if (rule.getCount().isStoreCountInMap()
 									&& getRowCountColIndex() != -1) {
@@ -130,27 +133,45 @@ public class RulesImpl implements Rules {
 
 			}
 		}
-		Sheet countOnSheet = DashboardUtility.getSheet(rule.getCount()
-				.getCountOnSheet(), filterWorkbook);
-		Row row = null;
-		Cell dateCell = null;
-		Cell highPriority = null;
-		Cell mediumPriority = null;
-		Cell lowPriority = null;
-		for (Date createDate : storeCountMap.keySet()) {
-			row = countOnSheet.createRow(countOnSheet.getLastRowNum());
-			dateCell = row.createCell(1);
-			dateCell.setCellValue(createDate);
-			highPriority = row.createCell(2);
-			highPriority.setCellValue(storeCountMap.get(createDate).get(0));
-			mediumPriority = row.createCell(3);
-			mediumPriority.setCellValue(storeCountMap.get(createDate).get(1));
-			lowPriority = row.createCell(4);
-			lowPriority.setCellValue(storeCountMap.get(createDate).get(2));
+		if (rule.getCount() != null && !storeCountMap.isEmpty()) {
+			Sheet countOnSheet = DashboardUtility.getSheet(rule.getCount()
+					.getCountOnSheet(), filterWorkbook);
+			try {
+				countOnSheet.createFreezePane(12, 3);
+				writeBack(filter, filterWorkbook);
+				filterWorkbook = (HSSFWorkbook) DashboardUtility
+						.getWorkBook(DashboardConstants.wbURLMap.get(filter
+								.getFileToFilter().split(".x")[0]));
+				countOnSheet = DashboardUtility.getSheet(rule.getCount()
+						.getCountOnSheet(), filterWorkbook);
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println("previously didn't have a freeze pane.");
+			}
+			Row row = null;
+			Cell dateCell = null;
+			Cell highPriority = null;
+			Cell mediumPriority = null;
+			Cell lowPriority = null;
+			int lastRow = countOnSheet.getLastRowNum();
+			for (Date createDate : storeCountMap.keySet()) {
+				row = countOnSheet.createRow(lastRow++);
+				dateCell = row.createCell(1);
+				dateCell.setCellValue(createDate);
+				highPriority = row.createCell(2);
+				highPriority.setCellValue(storeCountMap.get(createDate).get(0));
+				mediumPriority = row.createCell(3);
+				mediumPriority.setCellValue(storeCountMap.get(createDate)
+						.get(1));
+				lowPriority = row.createCell(4);
+				lowPriority.setCellValue(storeCountMap.get(createDate).get(2));
+			}
 		}
+
 		setFilterColIndex(-1);
 		setUpdateColIndex(-1);
-		writeBack(filter, filterWorkbook);
+		if (isWbChanged()) {
+			writeBack(filter, filterWorkbook);
+		}
 	}
 
 	private void getPriority(Row row, Map<Date, List<Integer>> storeCountMap) {
@@ -188,6 +209,7 @@ public class RulesImpl implements Rules {
 				priorities.set(2, priorities.get(2) + 1);
 			}
 		}
+		setWbChanged(Boolean.TRUE);
 		storeCountMap.put(row.getCell(getFilterColIndex()).getDateCellValue(),
 				priorities);
 	}
@@ -211,6 +233,7 @@ public class RulesImpl implements Rules {
 	 * @param row
 	 */
 	private void setCellValue(Row row) {
+		setWbChanged(Boolean.TRUE);
 		if (isNewUpdCol()) {
 			row.createCell(getUpdateColIndex());
 		}
@@ -542,7 +565,7 @@ public class RulesImpl implements Rules {
 
 	public static void main(String[] args) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, 3);
+		calendar.add(Calendar.DATE, -7);
 		System.out.println(calendar.getTime());
 
 	}
@@ -560,5 +583,20 @@ public class RulesImpl implements Rules {
 	 */
 	public void setRowCountColIndex(int rowCountColIndex) {
 		this.rowCountColIndex = rowCountColIndex;
+	}
+
+	/**
+	 * @return the wbChanged
+	 */
+	public boolean isWbChanged() {
+		return wbChanged;
+	}
+
+	/**
+	 * @param wbChanged
+	 *            the wbChanged to set
+	 */
+	public void setWbChanged(boolean wbChanged) {
+		this.wbChanged = wbChanged;
 	}
 }
