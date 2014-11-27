@@ -133,11 +133,12 @@ public class RulesImpl implements Rules {
 
 			}
 		}
+		//fsadfakfj;lk
 		if (rule.getCount() != null && !storeCountMap.isEmpty()) {
 			Sheet countOnSheet = DashboardUtility.getSheet(rule.getCount()
 					.getCountOnSheet(), filterWorkbook);
 			try {
-				countOnSheet.createFreezePane(12, 3);
+				countOnSheet.createFreezePane(12, 3); 
 				writeBack(filter, filterWorkbook);
 				filterWorkbook = (HSSFWorkbook) DashboardUtility
 						.getWorkBook(DashboardConstants.wbURLMap.get(filter
