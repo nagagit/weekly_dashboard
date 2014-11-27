@@ -60,7 +60,7 @@
 				<filterColADate>true</filterColADate>
 				<sheetToFilter>Daily Data</sheetToFilter>
 				<values>
-					<valuesToFilter>>today-13</valuesToFilter>
+					<valuesToFilter>>today-13</valuesToFilter> 
 				</values>
 			</filter>
 			<type>FilterAndUpdate</type>
