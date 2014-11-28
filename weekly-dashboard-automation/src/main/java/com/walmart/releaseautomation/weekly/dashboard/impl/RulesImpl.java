@@ -10,15 +10,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -31,6 +32,7 @@ import com.walmart.logistics.weekly.dashboard.util.DashboardUtility;
 import com.walmart.releaseautomation.weekly.dashboard.constants.DashboardConstants;
 import com.walmart.releaseautomation.weekly.dashboard.intf.Rules;
 import com.walmart.releaseautomation.weekly.dashboard.model.Filter;
+import com.walmart.releaseautomation.weekly.dashboard.model.NarrowDownTo;
 import com.walmart.releaseautomation.weekly.dashboard.model.Rule;
 import com.walmart.releaseautomation.weekly.dashboard.model.Update;
 
@@ -43,6 +45,8 @@ public class RulesImpl implements Rules {
 	private List<Integer> toEvalColIndexes;
 	private boolean breaker;
 	private boolean wbChanged;
+	private boolean rowMatchesWithFilter;
+	private boolean[] filterResults;
 
 	/**
 	 * Filter-DefectsReport.xls|1|Defect Root
@@ -53,92 +57,132 @@ public class RulesImpl implements Rules {
 	public void filterAndUpdate(Rule rule) throws IOException {
 		setRule(rule);
 		Filter filter = rule.getFilter();
-		Update update = rule.getUpdate();
+		List<Update> updates = rule.getUpdates();
 		Date createdDate = null;
-		Map<Date, List<Integer>> storeCountMap = new HashMap<Date, List<Integer>>();
+		Map<Date, List<Integer>> storeCountMap = new TreeMap<Date, List<Integer>>();
 		HSSFWorkbook filterWorkbook = (HSSFWorkbook) DashboardUtility
 				.getWorkBook(DashboardConstants.wbURLMap.get(filter
 						.getFileToFilter().split(".x")[0]));
 		Sheet filterSheet = DashboardUtility.getSheet(
 				filter.getSheetToFilter(), filterWorkbook);
-		for (Row row : filterSheet) {
-			if (getFilterColIndex() == -1 && getUpdateColIndex() == -1) {
-				Cell cell;
-				String tempCell = update.getColToUpdate().replace("^", "");
-				for (Iterator<Cell> iterator = row.iterator(); iterator
-						.hasNext();) {
-					cell = iterator.next();
-					if (getFilterColIndex() == -1
-							&& cell.getStringCellValue().equals(
-									filter.getColToFilter())) {
-						setFilterColIndex(cell.getColumnIndex());
-					}
-					if (getUpdateColIndex() == -1
-							&& cell.getStringCellValue().equals(tempCell)) {
-						setUpdateColIndex(cell.getColumnIndex());
-					} else if (getUpdateColIndex() == -1
-							&& cell.getColumnIndex() + 1 == row
-									.getPhysicalNumberOfCells()
-							&& update.getColToUpdate().contains("^")) {
-						Cell newColumnCell = row.createCell(row
-								.getPhysicalNumberOfCells());
-						newColumnCell.setCellValue(update.getColToUpdate()
-								.replace("^", ""));
-						setUpdateColIndex(newColumnCell.getColumnIndex());
-						setNewUpdCol(Boolean.TRUE);
-					}
-					if (getRowCountColIndex() == -1
-							&& rule.getCount() != null
-							&& cell.getStringCellValue().equals(
-									rule.getCount().getCountFromCol())) {
-						setRowCountColIndex(cell.getColumnIndex());
-					}
-				}
-			} else if (row.getCell(getFilterColIndex()) != null) {
-				if (filter.getValuesToFilter().size() == 1) {
-					String valueToFilter = filter.getValuesToFilter().get(0);
-					int filterColCellType = row.getCell(getFilterColIndex())
-							.getCellType();
-					if (valueToFilter
-							.equalsIgnoreCase(DashboardConstants.BLANK_CELL_STR)
-							&& filterColCellType == Cell.CELL_TYPE_BLANK) {
-						setCellValue(row);
-					} else if (valueToFilter
-							.equalsIgnoreCase(DashboardConstants.NOT_OF_BLANK_CELL_STR)
-							&& filterColCellType != Cell.CELL_TYPE_BLANK) {
-						setCellValue(row);
-					} else if (filter.isFilterColADate()) {
-						if (createdDate == null) {
-							Calendar calendar = Calendar.getInstance();
-							calendar.add(Calendar.DATE, -Integer
-									.parseInt(valueToFilter.split("-")[1]));
-							createdDate = calendar.getTime();
+		for (Update update : updates) {
+			for (Row row : filterSheet) {
+				int index = 0;
+				for (NarrowDownTo narrowDownTo : filter.getNarrowDownTos()) {
+					setRowMatchesWithFilter(Boolean.FALSE);
+					if (getFilterColIndex() == -1 && getUpdateColIndex() == -1) {
+						Cell cell;
+						String tempCell = update.getColToUpdate().replace("^",
+								"");
+						for (Iterator<Cell> iterator = row.iterator(); iterator
+								.hasNext();) {
+							cell = iterator.next();
+							if (getFilterColIndex() == -1
+									&& cell.getStringCellValue().equals(
+											narrowDownTo.getColToFilter())) {
+								setFilterColIndex(cell.getColumnIndex());
+							}
+							if (getUpdateColIndex() == -1
+									&& cell.getStringCellValue().equals(
+											tempCell)) {
+								setUpdateColIndex(cell.getColumnIndex());
+							} else if (getUpdateColIndex() == -1
+									&& cell.getColumnIndex() + 1 == row
+											.getPhysicalNumberOfCells()
+									&& update.getColToUpdate().contains("^")) {
+								Cell newColumnCell = row.createCell(row
+										.getPhysicalNumberOfCells());
+								newColumnCell.setCellValue(update
+										.getColToUpdate().replace("^", ""));
+								setUpdateColIndex(newColumnCell
+										.getColumnIndex());
+								setNewUpdCol(Boolean.TRUE);
+							}
+							if (getRowCountColIndex() == -1
+									&& rule.getCount() != null
+									&& cell.getStringCellValue().equals(
+											rule.getCount().getCountFromCol())) {
+								setRowCountColIndex(cell.getColumnIndex());
+							}
 						}
-						if (row.getCell(getFilterColIndex()).getDateCellValue()
-								.after(createdDate)) {
-							setCellValue(row);
-							if (rule.getCount().isStoreCountInMap()
-									&& getRowCountColIndex() != -1) {
-								getPriority(row, storeCountMap);
+					} else if (row.getCell(getFilterColIndex()) != null) {
+						if (narrowDownTo.getValuesToFilter().size() == 1) {
+							String valueToFilter = narrowDownTo
+									.getValuesToFilter().get(0);
+							int filterColCellType = row.getCell(
+									getFilterColIndex()).getCellType();
+							if (valueToFilter
+									.equalsIgnoreCase(DashboardConstants.BLANK_CELL_STR)
+									&& filterColCellType == Cell.CELL_TYPE_BLANK) {
+								index++;
+								if (index != 0) {
+									setRowMatchesWithFilter(isRowMatchesWithFilter()
+											&& Boolean.TRUE);
+								} else {
+									setRowMatchesWithFilter(Boolean.TRUE);
+								}
+							} else if (valueToFilter
+									.equalsIgnoreCase(DashboardConstants.NOT_OF_BLANK_CELL_STR)
+									&& filterColCellType != Cell.CELL_TYPE_BLANK) {
+								index++;
+								if (index != 0) {
+									setRowMatchesWithFilter(isRowMatchesWithFilter()
+											&& Boolean.TRUE);
+								} else {
+									setRowMatchesWithFilter(Boolean.TRUE);
+								}
+							} else if (narrowDownTo.isFilterColADate()) {
+								if (createdDate == null) {
+									Calendar calendar = Calendar.getInstance();
+									calendar.add(Calendar.DATE,
+											-Integer.parseInt(valueToFilter
+													.split("-")[1]));
+									createdDate = calendar.getTime();
+								}
+								if (row.getCell(getFilterColIndex())
+										.getDateCellValue().after(createdDate)) {
+									index++;
+									if (index != 0) {
+										setRowMatchesWithFilter(isRowMatchesWithFilter()
+												&& Boolean.TRUE);
+									} else {
+										setRowMatchesWithFilter(Boolean.TRUE);
+									}
+								}
+							}
+						} else {
+							if (narrowDownTo.getValuesToFilter().contains(
+									row.getCell(getFilterColIndex())
+											.getStringCellValue())) {
+								index++;
+								if (index != 0) {
+									setRowMatchesWithFilter(isRowMatchesWithFilter()
+											&& Boolean.TRUE);
+								} else {
+									setRowMatchesWithFilter(Boolean.TRUE);
+								}
 							}
 						}
 					}
-				} else {
-					if (filter.getValuesToFilter().contains(
-							row.getCell(getFilterColIndex())
-									.getStringCellValue())) {
-						setCellValue(row);
+					setFilterColIndex(-1);
+					setUpdateColIndex(-1);
+				}
+				if (isRowMatchesWithFilter()) {
+					setCellValue(row, update.getValueToUpdate());
+					if (rule.getCount().isStoreCountInMap()
+							&& getRowCountColIndex() != -1) {
+						getPriority(row, storeCountMap);
 					}
 				}
-
 			}
 		}
-		//fsadfakfj;lk
+
+		// fsadfakfj;lk
 		if (rule.getCount() != null && !storeCountMap.isEmpty()) {
 			Sheet countOnSheet = DashboardUtility.getSheet(rule.getCount()
 					.getCountOnSheet(), filterWorkbook);
 			try {
-				countOnSheet.createFreezePane(12, 3); 
+				countOnSheet.createFreezePane(1, 1);
 				writeBack(filter, filterWorkbook);
 				filterWorkbook = (HSSFWorkbook) DashboardUtility
 						.getWorkBook(DashboardConstants.wbURLMap.get(filter
@@ -153,23 +197,34 @@ public class RulesImpl implements Rules {
 			Cell highPriority = null;
 			Cell mediumPriority = null;
 			Cell lowPriority = null;
+			Cell totalPriorityCnt = null;
+			int prioritySum = 0;
 			int lastRow = countOnSheet.getLastRowNum();
 			for (Date createDate : storeCountMap.keySet()) {
 				row = countOnSheet.createRow(lastRow++);
-				dateCell = row.createCell(1);
+				dateCell = row.createCell(0);
 				dateCell.setCellValue(createDate);
-				highPriority = row.createCell(2);
+				// binds the Date style
+				HSSFCellStyle dateCellStyle = filterWorkbook.createCellStyle();
+				short df = filterWorkbook.createDataFormat().getFormat(
+						"MM-dd-yyyy");
+				dateCellStyle.setDataFormat(df);
+				dateCell.setCellStyle(dateCellStyle);
+				highPriority = row.createCell(1);
 				highPriority.setCellValue(storeCountMap.get(createDate).get(0));
-				mediumPriority = row.createCell(3);
+				mediumPriority = row.createCell(2);
 				mediumPriority.setCellValue(storeCountMap.get(createDate)
 						.get(1));
-				lowPriority = row.createCell(4);
+				lowPriority = row.createCell(3);
 				lowPriority.setCellValue(storeCountMap.get(createDate).get(2));
+
+				totalPriorityCnt = row.createCell(4);
+				prioritySum = (int) (highPriority.getNumericCellValue()
+						+ mediumPriority.getNumericCellValue() + lowPriority
+						.getNumericCellValue());
+				totalPriorityCnt.setCellValue(prioritySum);
 			}
 		}
-
-		setFilterColIndex(-1);
-		setUpdateColIndex(-1);
 		if (isWbChanged()) {
 			writeBack(filter, filterWorkbook);
 		}
@@ -232,18 +287,18 @@ public class RulesImpl implements Rules {
 
 	/**
 	 * @param row
+	 * @param valueToUpdate
 	 */
-	private void setCellValue(Row row) {
+	private void setCellValue(Row row, String valueToUpdate) {
 		setWbChanged(Boolean.TRUE);
 		if (isNewUpdCol()) {
 			row.createCell(getUpdateColIndex());
 		}
-		if (rule.getUpdate().getValueToUpdate().equals("*")) {
+		if (valueToUpdate.equals("*")) {
 			row.getCell(getUpdateColIndex()).setCellValue(
 					row.getCell(getFilterColIndex()).getStringCellValue());
 		} else {
-			row.getCell(getUpdateColIndex()).setCellValue(
-					rule.getUpdate().getValueToUpdate());
+			row.getCell(getUpdateColIndex()).setCellValue(valueToUpdate);
 		}
 	}
 
@@ -599,5 +654,35 @@ public class RulesImpl implements Rules {
 	 */
 	public void setWbChanged(boolean wbChanged) {
 		this.wbChanged = wbChanged;
+	}
+
+	/**
+	 * @return the rowMatchesWithFilter
+	 */
+	public boolean isRowMatchesWithFilter() {
+		return rowMatchesWithFilter;
+	}
+
+	/**
+	 * @param rowMatchesWithFilter
+	 *            the rowMatchesWithFilter to set
+	 */
+	public void setRowMatchesWithFilter(boolean rowMatchesWithFilter) {
+		this.rowMatchesWithFilter = rowMatchesWithFilter;
+	}
+
+	/**
+	 * @return the filterResults
+	 */
+	public boolean[] getFilterResults() {
+		return filterResults;
+	}
+
+	/**
+	 * @param filterResults
+	 *            the filterResults to set
+	 */
+	public void setFilterResults(boolean[] filterResults) {
+		this.filterResults = filterResults;
 	}
 }

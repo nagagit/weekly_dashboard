@@ -1,6 +1,7 @@
 package com.walmart.releaseautomation.weekly.dashboard.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -12,7 +13,7 @@ public class Rule implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String type;
 	private Filter filter;
-	private Update update;
+	private List<Update> updates;
 	private Calculate calculate;
 	private CopyData copyData;
 	private DeleteData deleteData;
@@ -50,21 +51,6 @@ public class Rule implements Serializable {
 	 */
 	public void setFilter(Filter filter) {
 		this.filter = filter;
-	}
-
-	/**
-	 * @return the update
-	 */
-	public Update getUpdate() {
-		return update;
-	}
-
-	/**
-	 * @param update
-	 *            the update to set
-	 */
-	public void setUpdate(Update update) {
-		this.update = update;
 	}
 
 	/**
@@ -185,6 +171,20 @@ public class Rule implements Serializable {
 	 */
 	public void setCount(RowCount count) {
 		this.count = count;
+	}
+
+	/**
+	 * @return the updates
+	 */
+	public List<Update> getUpdates() {
+		return updates;
+	}
+
+	/**
+	 * @param updates the updates to set
+	 */
+	public void setUpdates(List<Update> updates) {
+		this.updates = updates;
 	}
 
 }

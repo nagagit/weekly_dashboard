@@ -24,7 +24,16 @@ public class TestExcel {
 
 	public static void main(String[] args) throws IOException, JAXBException,
 			InvalidFormatException, BiffException, InterruptedException {
+		mockMapValues();
 		new TestExcel().readFromExcel();
+	}
+
+	private static void mockMapValues() {
+		DashboardConstants.wbURLMap.put("Mini_Dashboard",
+				"C:/Users/l.naga rajesh/Documents/" + "Mini_Dashboard.xls");
+		DashboardConstants.wbURLMap.put("DefectsReport", "C:/Users/l.naga rajesh/Documents/DefectsReport.xls");
+		DashboardConstants.wbURLMap.put("Daily_Release_Dashboard", "C:/Users/l.naga rajesh/Documents/Daily_Release_Dashboard.xlsm");
+		DashboardConstants.wbURLMap.put("PMO Only", "C:/Users/l.naga rajesh/Documents/PMO Only.xls");
 	}
 
 	public void readFromExcel() throws IOException, JAXBException,
