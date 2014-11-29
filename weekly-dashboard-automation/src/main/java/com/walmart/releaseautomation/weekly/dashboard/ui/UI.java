@@ -29,6 +29,7 @@ public class UI {
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
+	private JTextField textField_4;
 
 	/**
 	 * Launch the application.
@@ -74,7 +75,7 @@ public class UI {
 
 		JLabel lblSelectDefectReports = new JLabel(
 				"Select Defect Reports Sheet");
-		lblSelectDefectReports.setBounds(53, 53, 180, 14);
+		lblSelectDefectReports.setBounds(26, 53, 207, 14);
 		frame.getContentPane().add(lblSelectDefectReports);
 
 		textField = new JTextField();
@@ -92,7 +93,7 @@ public class UI {
 		frame.getContentPane().add(btnNewButton);
 
 		JLabel lblNewLabel = new JLabel("Select Dashboard Template");
-		lblNewLabel.setBounds(53, 99, 180, 14);
+		lblNewLabel.setBounds(26, 99, 207, 14);
 		frame.getContentPane().add(lblNewLabel);
 
 		textField_1 = new JTextField();
@@ -110,7 +111,7 @@ public class UI {
 		frame.getContentPane().add(btnNewButton_1);
 
 		JLabel lblNewLabel_1 = new JLabel("Select PMO Only Sheet");
-		lblNewLabel_1.setBounds(53, 145, 180, 14);
+		lblNewLabel_1.setBounds(26, 145, 207, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 
 		textField_2 = new JTextField();
@@ -152,7 +153,7 @@ public class UI {
 				}
 			}
 		});
-		btnNewButton_3.setBounds(181, 242, 158, 23);
+		btnNewButton_3.setBounds(181, 283, 158, 23);
 		frame.getContentPane().add(btnNewButton_3);
 
 		JButton btnNewButton_4 = new JButton("Clear Selection");
@@ -165,15 +166,15 @@ public class UI {
 				DashboardConstants.wbURLMap.clear();
 			}
 		});
-		btnNewButton_4.setBounds(360, 242, 158, 23);
+		btnNewButton_4.setBounds(360, 283, 158, 23);
 		frame.getContentPane().add(btnNewButton_4);
 
 		JLabel lblSetPathFor = new JLabel("Set Path for Temp Sheets Creation");
-		lblSetPathFor.setBounds(53, 191, 180, 14);
+		lblSetPathFor.setBounds(26, 240, 207, 14);
 		frame.getContentPane().add(lblSetPathFor);
 
 		textField_3 = new JTextField();
-		textField_3.setBounds(233, 188, 246, 20);
+		textField_3.setBounds(233, 237, 246, 20);
 		frame.getContentPane().add(textField_3);
 		textField_3.setColumns(10);
 
@@ -188,8 +189,42 @@ public class UI {
 						textField_3.getText() + "Mini_Dashboard.xls");
 			}
 		});
-		btnChoose.setBounds(511, 188, 89, 23);
+		btnChoose.setBounds(511, 237, 89, 23);
 		frame.getContentPane().add(btnChoose);
+
+		JLabel lblSelectOldDashboard = new JLabel("Select Old Dashboard Sheet ");
+		lblSelectOldDashboard.setBounds(26, 191, 207, 14);
+		frame.getContentPane().add(lblSelectOldDashboard);
+
+		textField_4 = new JTextField();
+		textField_4.setBounds(233, 188, 246, 20);
+		frame.getContentPane().add(textField_4);
+		textField_4.setColumns(10);
+
+		JButton btnChoose_1 = new JButton("Choose");
+		btnChoose_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lastWkDashboardSheet(e);
+			}
+		});
+		btnChoose_1.setBounds(511, 188, 89, 23);
+		frame.getContentPane().add(btnChoose_1);
+	}
+
+	private void lastWkDashboardSheet(ActionEvent e) {
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"Excel Workbooks", "xls", "xlsb", "xlsx", "xlsm");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			System.out.println("You chose to open this file: "
+					+ chooser.getSelectedFile().getName());
+			textField_4.setText(chooser.getSelectedFile().getAbsolutePath());
+			DashboardConstants.wbURLMap.put(
+					"Daily_Release_Dashboard_last_week", chooser
+							.getSelectedFile().getAbsolutePath());
+		}
 	}
 
 	private void defectReportsSheetChooseBtnActionPerformed(

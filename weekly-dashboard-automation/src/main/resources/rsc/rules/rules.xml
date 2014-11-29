@@ -4,7 +4,7 @@
 		<rule>
 			<executeMacro>
 				<onFile>Daily_Release_Dashboard.xlsm</onFile>
-				<scriptName>makeacopy.vbs</scriptName>
+				<scriptName>makeACopyOfMiniDashboardForThisWeek.vbs</scriptName>
 			</executeMacro>
 			<type>ExecuteMacro</type>
 		</rule>
@@ -501,6 +501,30 @@
 			</updates>
 		</rule>
 
+
+		<rule>
+			<filter>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<sheetToFilter>Daily Data</sheetToFilter>
+				<narrowDownTo>
+					<colToFilter>RCA</colToFilter>
+					<values>
+						<valuesToFilter>Y</valuesToFilter>
+						<valuesToFilter>N</valuesToFilter>
+					</values>
+				</narrowDownTo>
+			</filter>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>Subtype</colToUpdate>
+					<valueToUpdate>Backlog</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+
+
 		<rule>
 			<filter>
 				<fromFile>Mini_Dashboard.xls</fromFile>
@@ -514,23 +538,357 @@
 				</narrowDownTo>
 			</filter>
 			<type>FilterAndEvaluate</type>
-			<updates>
-				<update>
-					<colToUpdate>Subtype</colToUpdate>
-					<valueToUpdate>Backlog</valueToUpdate>
-				</update>
-			</updates>
 			<evaluateFormula>
 				<fromFile>Mini_Dashboard.xls</fromFile>
 				<fromSheet>Daily Data</fromSheet>
 				<cell>
 					<header>RCA Classification</header>
-					<formula>+VLOOKUP(C2,Lookup!$A$1:$C$10813,3,0)</formula>
+					<formula>=+VLOOKUP(C2,Lookup!$A$1:$C$10813,3,0)</formula>
 					<cellType>String</cellType>
 				</cell>
 				<cell>
 					<header>RCA Grouping</header>
-					<formula>+VLOOKUP(AE2,Lookup!$H$2:$I$64,2,0)</formula>
+					<formula>=+VLOOKUP(AE2,Lookup!$H$2:$I$64,2,0)</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+		</rule>
+
+		<rule>
+			<filter>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<sheetToFilter>Daily Data</sheetToFilter>
+				<narrowDownTo>
+					<colToFilter>RCA</colToFilter>
+					<values>
+						<valuesToFilter>Y</valuesToFilter>
+						<valuesToFilter>N</valuesToFilter>
+						<valuesToFilter>ISD</valuesToFilter>
+					</values>
+				</narrowDownTo>
+				<narrowDownTo>
+					<colToFilter>Target Release</colToFilter>
+					<values>
+						<valuesToFilter>2015.2A</valuesToFilter>
+						<valuesToFilter>GLS NextGen</valuesToFilter>
+						<valuesToFilter>2015.2B</valuesToFilter>
+					</values>
+				</narrowDownTo>
+			</filter>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>RCA Status</colToUpdate>
+					<valueToUpdate>Future Release</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+
+		<rule>
+			<filter>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<sheetToFilter>Daily Data</sheetToFilter>
+				<narrowDownTo>
+					<colToFilter>RCA</colToFilter>
+					<values>
+						<valuesToFilter>Y</valuesToFilter>
+						<valuesToFilter>N</valuesToFilter>
+						<valuesToFilter>ISD</valuesToFilter>
+					</values>
+				</narrowDownTo>
+				<narrowDownTo>
+					<colToFilter>Target Release</colToFilter>
+					<values>
+						<valuesToFilter>2015.2A</valuesToFilter>
+						<valuesToFilter>GLS NextGen</valuesToFilter>
+						<valuesToFilter>2015.2B</valuesToFilter>
+					</values>
+				</narrowDownTo>
+			</filter>
+			<type>FilterAndEvaluate</type>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>RCA Classification</header>
+					<formula>=+VLOOKUP(C2,Lookup!$A$1:$C$10813,3,0)</formula>
+					<cellType>String</cellType>
+				</cell>
+				<cell>
+					<header>RCA Grouping</header>
+					<formula>=+VLOOKUP(AE2,Lookup!$H$2:$I$64,2,0)</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+		</rule>
+
+
+		<rule>
+			<filter>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<sheetToFilter>Daily Data</sheetToFilter>
+				<narrowDownTo>
+					<colToFilter>RCA Status</colToFilter>
+					<values>
+						<valuesToFilter>Triage for Closure</valuesToFilter>
+						<valuesToFilter>Potential CR</valuesToFilter>
+						<valuesToFilter>Translation</valuesToFilter>
+					</values>
+				</narrowDownTo>
+				<narrowDownTo>
+					<colToFilter>RCA</colToFilter>
+					<values>
+						<valuesToFilter>Y</valuesToFilter>
+						<valuesToFilter>N</valuesToFilter>
+					</values>
+				</narrowDownTo>
+			</filter>
+			<type>FilterAndEvaluate</type>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>RCA Status</header>
+					<formula>=+VLOOKUP(C2,Lookup!$L$1:$M$275,2,0)</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+		</rule>
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>RCA Status</colToFilter>
+						<values>
+							<valuesToFilter>Triage for Closure</valuesToFilter>
+							<valuesToFilter>Potential CR</valuesToFilter>
+							<valuesToFilter>Translation</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndEvaluate</type>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>RCA Classification</header>
+					<formula>=+VLOOKUP(C2,Lookup!$A$1:$C$10813,3,0)</formula>
+					<cellType>String</cellType>
+				</cell>
+				<cell>
+					<header>RCA Grouping</header>
+					<formula>=+VLOOKUP(AE2,Lookup!$H$2:$I$64,2,0)</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+		</rule>
+
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>RCA Status</colToFilter>
+						<values>
+							<valuesToFilter>Triage for Closure</valuesToFilter>
+							<valuesToFilter>Potential CR</valuesToFilter>
+							<valuesToFilter>Translation</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>RCA high level status</colToUpdate>
+					<valueToUpdate>*</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>RCA Status</colToFilter>
+						<values>
+							<valuesToFilter>#N/A</valuesToFilter>
+							<valuesToFilter>Translation</valuesToFilter>
+						</values>
+					</narrowDownTo>
+					<narrowDownTo>
+						<colToFilter>Tracking Status</colToFilter>
+						<values>
+							<valuesToFilter>*Awaiting Deployment to SIT</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>RCA high level status</colToUpdate>
+					<valueToUpdate>Fixed</valueToUpdate>
+				</update>
+				<update>
+					<colToUpdate>RCA Status</colToUpdate>
+					<valueToUpdate>Fixed</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>RCA Status</colToFilter>
+						<values>
+							<valuesToFilter>#N/A</valuesToFilter>
+							<valuesToFilter>Translation</valuesToFilter>
+						</values>
+					</narrowDownTo>
+					<narrowDownTo>
+						<colToFilter>Defect Status</colToFilter>
+						<values>
+							<valuesToFilter>Fixed</valuesToFilter>
+							<valuesToFilter>Pending Migration</valuesToFilter>
+							<valuesToFilter>Ready for Retest</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>RCA high level status</colToUpdate>
+					<valueToUpdate>Fixed</valueToUpdate>
+				</update>
+				<update>
+					<colToUpdate>RCA Status</colToUpdate>
+					<valueToUpdate>Fixed</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>RCA Status</colToFilter>
+						<values>
+							<valuesToFilter>#N/A</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>RCA Status</colToUpdate>
+					<valueToUpdate>Net Open</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>RCA Status</colToFilter>
+						<values>
+							<valuesToFilter>Net Open</valuesToFilter>
+						</values>
+					</narrowDownTo>
+					<narrowDownTo>
+						<colToFilter>RCA</colToFilter>
+						<values>
+							<valuesToFilter>N</valuesToFilter>
+						</values>
+					</narrowDownTo>
+					<narrowDownTo>
+						<colToFilter>RCA high level status</colToFilter>
+						<values>
+							<valuesToFilter>!Translation</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>RCA Grouping</colToUpdate>
+					<valueToUpdate>RCA to be completed</valueToUpdate>
+				</update>
+				<update>
+					<colToUpdate>RCA high level status</colToUpdate>
+					<valueToUpdate>RCA to be completed</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>RCA Status</colToFilter>
+						<values>
+							<valuesToFilter>Net Open</valuesToFilter>
+						</values>
+					</narrowDownTo>
+					<narrowDownTo>
+						<colToFilter>RCA</colToFilter>
+						<values>
+							<valuesToFilter>Y</valuesToFilter>
+						</values>
+					</narrowDownTo>
+					<narrowDownTo>
+						<colToFilter>RCA high level status</colToFilter>
+						<values>
+							<valuesToFilter>!Translation</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>RCA Grouping</colToUpdate>
+					<valueToUpdate>RCA completed</valueToUpdate>
+				</update>
+				<update>
+					<colToUpdate>RCA high level status</colToUpdate>
+					<valueToUpdate>RCA completed</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+
+		<rule>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>Module</header>
+					<formula>=+IF(ISERROR(VLOOKUP(C2,Lookup!$A$1:$E$10813,5,0)),0,(VLOOKUP(C2,Lookup!$A$1:$E$10813,5,TRUE)))
+					</formula>
 					<cellType>String</cellType>
 				</cell>
 			</evaluateFormula>
@@ -543,45 +901,206 @@
 					<fromFile>Mini_Dashboard.xls</fromFile>
 					<sheetToFilter>Daily Data</sheetToFilter>
 					<narrowDownTo>
-						<colToFilter>RCA</colToFilter>
+						<colToFilter>Assigned Team</colToFilter>
 						<values>
-							<valuesToFilter>Y</valuesToFilter>
-							<valuesToFilter>N</valuesToFilter>
+							<valuesToFilter>Unified</valuesToFilter>
+							<valuesToFilter>Unified Receiving</valuesToFilter>
 							<valuesToFilter>ISD</valuesToFilter>
-						</values>
-					</narrowDownTo>
-					<narrowDownTo>
-						<colToFilter>Target Release</colToFilter>
-						<values>
-							<valuesToFilter>2015.2A</valuesToFilter>
-							<valuesToFilter>GLS NextGen</valuesToFilter>
-							<valuesToFilter>2015.2B</valuesToFilter>
+							<valuesToFilter>YMS</valuesToFilter>
+							<valuesToFilter>3283</valuesToFilter>
+							<valuesToFilter>Japan Gaps</valuesToFilter>
+							<valuesToFilter>Business Continuity</valuesToFilter>
+							<valuesToFilter>WFM</valuesToFilter>
+							<valuesToFilter>Mexico Perishables</valuesToFilter>
+							<valuesToFilter>GLS Unified</valuesToFilter>
+							<valuesToFilter>SKU Growth</valuesToFilter>
+							<valuesToFilter>Upstreaming</valuesToFilter>
 						</values>
 					</narrowDownTo>
 				</filter>
 			</filters>
-			<type>FilterAndEvaluate</type>
+			<type>FilterAndUpdate</type>
 			<updates>
 				<update>
-					<colToUpdate>Subtype</colToUpdate>
-					<valueToUpdate>Backlog</valueToUpdate>
+					<colToUpdate>Assigned Team</colToUpdate>
+					<valueToUpdate>Others</valueToUpdate>
 				</update>
 			</updates>
+		</rule>
+
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>Assigned Team</colToFilter>
+						<values>
+							<valuesToFilter>*ISD*</valuesToFilter>
+							<valuesToFilter>*Walmart*</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>Assigned Team</colToUpdate>
+					<valueToUpdate>Walmart</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+		<rule>
 			<evaluateFormula>
 				<fromFile>Mini_Dashboard.xls</fromFile>
 				<fromSheet>Daily Data</fromSheet>
 				<cell>
-					<header>RCA Classification</header>
-					<formula>+VLOOKUP(C2,Lookup!$A$1:$C$10813,3,0)</formula>
-					<cellType>String</cellType>
-				</cell>
-				<cell>
-					<header>RCA Grouping</header>
-					<formula>+VLOOKUP(AE2,Lookup!$H$2:$I$64,2,0)</formula>
+					<header>HL LOE Status</header>
+					<formula>=+VLOOKUP(C2,[LOE_Tracker.xlsx]Defects_Sheet!$B$1:$Z$1768,16,TRUE)
+					</formula>
 					<cellType>String</cellType>
 				</cell>
 			</evaluateFormula>
 			<type>EvaluateFormula</type>
 		</rule>
+
+		<rule>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>T-Shirt Size</header>
+					<formula>=+VLOOKUP(C2,[LOE_Tracker.xlsx]Defects_Sheet!$B$1:$Z$1768,23,TRUE)
+					</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+			<type>EvaluateFormula</type>
+		</rule>
+
+		<rule>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>Business Priority</header>
+					<formula>=+IF(ISERROR(VLOOKUP(C2,'Business Priority CRs Defects
+						(2).xlsx'!Table43[[#All],[Defect ID]],1,0)),"No","Yes")
+					</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+			<type>EvaluateFormula</type>
+		</rule>
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>Type</colToFilter>
+						<values>
+							<valuesToFilter>Inflow</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>Actual RCA of Inflow</colToUpdate>
+					<valueToUpdate>N</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+		<rule>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>a</header>
+					<formula>=+VLOOKUP(c2,’[Daily_Release_Dashboard_25_07_2013.xlsm]Daily
+						Data’!$C$1:$F$1912,4,0)
+					</formula>
+					<cellType>String</cellType>
+				</cell>
+				<cell>
+					<header>b</header>
+					<formula>=AM2=F2</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+			<type>EvaluateFormula</type>
+		</rule>
+
+		<rule>
+			<filters>
+				<filter>
+					<fromFile>Mini_Dashboard.xls</fromFile>
+					<sheetToFilter>Daily Data</sheetToFilter>
+					<narrowDownTo>
+						<colToFilter>b</colToFilter>
+						<values>
+							<valuesToFilter>FALSE</valuesToFilter>
+						</values>
+					</narrowDownTo>
+					<narrowDownTo>
+						<colToFilter>Tracking Status</colToFilter>
+						<values>
+							<valuesToFilter>*Failed*</valuesToFilter>
+						</values>
+					</narrowDownTo>
+				</filter>
+			</filters>
+			<type>FilterAndUpdate</type>
+			<updates>
+				<update>
+					<colToUpdate>Type</colToUpdate>
+					<valueToUpdate>Reopen</valueToUpdate>
+				</update>
+			</updates>
+		</rule>
+
+		<rule>
+			<executeMacro>
+				<onFile>Daily_Release_Dashboard_last_week.xlsm</onFile>
+				<scriptName>makeACopyOfMiniDashboardForLastWeek.vbs</scriptName>
+			</executeMacro>
+			<type>ExecuteMacro</type>
+		</rule>
+
+		<rule>
+			<evaluateFormula>
+				<fromFile>Mini_Dashboard_lastwk.xls</fromFile>
+				<fromSheet>Daily Data</fromSheet>
+				<cell>
+					<header>a</header>
+					<formula>=+VLOOKUP(C2,'[Daily_Release_Dashboard_03_07_2014.xlsm]Daily
+						Data'!$C:$C,1,0)
+					</formula>
+					<cellType>String</cellType>
+				</cell>
+				<cell>
+					<header>b</header>
+					<formula>=AM2=F2</formula>
+					<cellType>String</cellType>
+				</cell>
+			</evaluateFormula>
+			<type>EvaluateFormula</type>
+		</rule>
+
+		<rule>
+			<executeMacro>
+				<onFile>weekly_dashboard_macrobook.xlsb</onFile>
+				<scriptName>saveAsXls.vbs</scriptName>
+			</executeMacro>
+			<type>ExecuteMacro</type>
+		</rule>
+
+
 	</items>
 </listContainer>
