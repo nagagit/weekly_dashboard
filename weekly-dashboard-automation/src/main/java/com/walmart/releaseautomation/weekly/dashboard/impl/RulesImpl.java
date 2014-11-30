@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -43,10 +44,10 @@ public class RulesImpl implements Rules {
 	private boolean newUpdCol;
 	private Rule rule;
 	private List<Integer> toEvalColIndexes;
-	private boolean breaker;
 	private boolean wbChanged;
 	private boolean rowMatchesWithFilter;
 	private boolean[] filterResults;
+	public static DataFormatter dataFormatter = new DataFormatter();
 
 	/**
 	 * Filter-DefectsReport.xls|1|Defect Root
@@ -65,7 +66,8 @@ public class RulesImpl implements Rules {
 						.getFileToFilter().split(".x")[0]));
 		Sheet filterSheet = DashboardUtility.getSheet(
 				filter.getSheetToFilter(), filterWorkbook);
-
+		FormulaEvaluator evaluator = filterWorkbook.getCreationHelper()
+				.createFormulaEvaluator();
 		for (Row row : filterSheet) {
 			bindFilterAndRowCntColIndexes(rule, filter, row);
 			bindUpdColIndex(rule, row);
@@ -101,13 +103,14 @@ public class RulesImpl implements Rules {
 											narrowDownTo);
 								}
 							} else {
-								validateValuesToFilter(row, index, narrowDownTo);
+								validateValuesToFilter(row, index,
+										narrowDownTo, evaluator);
 							}
 
 						}
 					}
 					if (isRowMatchesWithFilter()) {
-						setCellValue(row, update);
+						setCellValue(row, update, evaluator);
 					}
 				}
 			}
@@ -228,15 +231,27 @@ public class RulesImpl implements Rules {
 	 * @param typeConvertedCellValue
 	 * @param narrowDownTo
 	 * @param filterColCellType
+	 * @param evaluator
 	 * @return
 	 */
 	private String typeConvertCellValue(Row row, NarrowDownTo narrowDownTo,
-			int filterColCellType) {
+			int filterColCellType, FormulaEvaluator evaluator) {
 		String tempConvertedCellValue = "";
 		if (filterColCellType == Cell.CELL_TYPE_FORMULA) {
-			int formulaResultType = row.getCell(
-					narrowDownTo.getFilterColIndex())
-					.getCachedFormulaResultType();
+			int formulaResultType = Cell.CELL_TYPE_STRING;
+			if (evaluator != null) {
+				try {
+					String formatValue = dataFormatter.formatCellValue(
+							row.getCell(narrowDownTo.getFilterColIndex()),
+							evaluator);
+					Integer.parseInt(formatValue);
+					formulaResultType = Cell.CELL_TYPE_NUMERIC;
+				} catch (NumberFormatException e) {
+					formulaResultType = Cell.CELL_TYPE_STRING;
+				} catch (RuntimeException e) {
+					formulaResultType = Cell.CELL_TYPE_ERROR;
+				}
+			}
 			tempConvertedCellValue = bindAppropriateCellValue(row,
 					narrowDownTo, formulaResultType);
 		} else {
@@ -251,21 +266,23 @@ public class RulesImpl implements Rules {
 	 * @param row
 	 * @param narrowDownTo
 	 * @param tempConvertedCellValue
-	 * @param formulaResultType
+	 * @param cellType
 	 * @return
 	 */
 	private String bindAppropriateCellValue(Row row, NarrowDownTo narrowDownTo,
-			int formulaResultType) {
+			int cellType) {
 		String tempConvertedCellValue = "";
-		if (formulaResultType == Cell.CELL_TYPE_NUMERIC) {
+		if (cellType == Cell.CELL_TYPE_NUMERIC) {
 			tempConvertedCellValue = String.valueOf(row.getCell(
 					narrowDownTo.getFilterColIndex()).getNumericCellValue());
-		} else if (formulaResultType == Cell.CELL_TYPE_BOOLEAN) {
+		} else if (cellType == Cell.CELL_TYPE_BOOLEAN) {
 			tempConvertedCellValue = String.valueOf(row.getCell(
 					narrowDownTo.getFilterColIndex()).getBooleanCellValue());
-		} else if (formulaResultType == Cell.CELL_TYPE_STRING) {
+		} else if (cellType == Cell.CELL_TYPE_STRING) {
 			tempConvertedCellValue = String.valueOf(row.getCell(
 					narrowDownTo.getFilterColIndex()).getStringCellValue());
+		} else if (cellType == Cell.CELL_TYPE_ERROR) {
+			tempConvertedCellValue = "#N/A";
 		}
 		return tempConvertedCellValue;
 	}
@@ -400,8 +417,9 @@ public class RulesImpl implements Rules {
 	/**
 	 * @param row
 	 * @param update
+	 * @param evaluator
 	 */
-	private void setCellValue(Row row, Update update) {
+	private void setCellValue(Row row, Update update, FormulaEvaluator evaluator) {
 		setWbChanged(Boolean.TRUE);
 		if (isNewUpdCol()) {
 			row.createCell(update.getUpdateColIndex());
@@ -412,16 +430,25 @@ public class RulesImpl implements Rules {
 				if (row.getCell(update.getUpdateColIndex()) == null) {
 					Cell cell = row.createCell(update.getUpdateColIndex());
 				}
+				row.getCell(update.getUpdateColIndex()).setCellType(
+						row.getCell(narrowDownTo.getFilterColIndex())
+								.getCellType());
 				row.getCell(update.getUpdateColIndex()).setCellValue(
 						row.getCell(narrowDownTo.getFilterColIndex())
 								.getStringCellValue());
+				dataFormatter.formatCellValue(row.getCell(update
+						.getUpdateColIndex()));
 			}
 		} else {
 			if (row.getCell(update.getUpdateColIndex()) == null) {
 				Cell cell = row.createCell(update.getUpdateColIndex());
 			}
+			row.getCell(update.getUpdateColIndex()).setCellType(
+					Cell.CELL_TYPE_STRING);
 			row.getCell(update.getUpdateColIndex()).setCellValue(
 					update.getValueToUpdate());
+			dataFormatter.formatCellValue(row.getCell(update
+					.getUpdateColIndex()));
 		}
 	}
 
@@ -580,20 +607,18 @@ public class RulesImpl implements Rules {
 		Sheet sheet = DashboardUtility.getSheet(rule.getEvaluateFormula()
 				.getFromSheet(), evalFrmWB);
 		FormulaEvaluator evaluator = null;
-		/*
-		 * HSSFCellStyle dateCellStyle = evalFrmWB .createCellStyle(); short df
-		 * = evalFrmWB.createDataFormat().getFormat( "dd-MM-yyyy");
-		 * dateCellStyle.setDataFormat(df);
-		 */
+
+		HSSFCellStyle dateCellStyle = evalFrmWB.createCellStyle();
+		short df = evalFrmWB.createDataFormat().getFormat("dd-MM-yyyy");
+		dateCellStyle.setDataFormat(df);
+
 		for (Row row : sheet) {
-			if (isBreaker()) {
-				break;
-			} else if (row.isFormatted() && getToEvalColIndexes().isEmpty()) {
+			if (row.isFormatted() && getToEvalColIndexes().isEmpty()) {
 				bindEvalColIndexes(rule, row);
 			} else {
 				evaluator = evalFrmWB.getCreationHelper()
 						.createFormulaEvaluator();
-				evaluateCells(rule, evaluator, row);
+				evaluateCells(rule, evaluator, row, dateCellStyle);
 			}
 		}
 		setToEvalColIndexes(null);
@@ -690,21 +715,6 @@ public class RulesImpl implements Rules {
 	 */
 	public void setToEvalColIndexes(List<Integer> toEvalColIndexes) {
 		this.toEvalColIndexes = toEvalColIndexes;
-	}
-
-	/**
-	 * @return the breaker
-	 */
-	public boolean isBreaker() {
-		return breaker;
-	}
-
-	/**
-	 * @param breaker
-	 *            the breaker to set
-	 */
-	public void setBreaker(boolean breaker) {
-		this.breaker = breaker;
 	}
 
 	public static void main(String[] args) throws IOException {/*
@@ -809,7 +819,8 @@ public class RulesImpl implements Rules {
 						.getFileToFilter().split(".x")[0]));
 		Sheet filterSheet = DashboardUtility.getSheet(
 				filter.getSheetToFilter(), filterWorkbook);
-		FormulaEvaluator evaluator = null;
+		FormulaEvaluator evaluator = filterWorkbook.getCreationHelper()
+				.createFormulaEvaluator();
 		for (Row row : filterSheet) {
 			bindFilterAndRowCntColIndexes(rule, filter, row);
 			bindEvalColIndexes(rule, row);
@@ -821,14 +832,13 @@ public class RulesImpl implements Rules {
 				for (NarrowDownTo narrowDownTo : filter.getNarrowDownTo()) {
 					setRowMatchesWithFilter(Boolean.FALSE);
 					if (row.getCell(narrowDownTo.getFilterColIndex()) != null) {
-						validateValuesToFilter(row, index, narrowDownTo);
+						validateValuesToFilter(row, index, narrowDownTo,
+								evaluator);
 					}
 				}
 				if (isRowMatchesWithFilter()) {
 					// Evaluate Here
-					evaluator = filterWorkbook.getCreationHelper()
-							.createFormulaEvaluator();
-					evaluateCells(rule, evaluator, row);
+					evaluateCells(rule, evaluator, row, null);
 				}
 			}
 		}
@@ -844,8 +854,10 @@ public class RulesImpl implements Rules {
 	 * @param rule
 	 * @param evaluator
 	 * @param row
+	 * @param dateCellStyle
 	 */
-	private void evaluateCells(Rule rule, FormulaEvaluator evaluator, Row row) {
+	private void evaluateCells(Rule rule, FormulaEvaluator evaluator, Row row,
+			HSSFCellStyle dateCellStyle) {
 		for (int eachEvalColIndex = 0; eachEvalColIndex < getToEvalColIndexes()
 				.size(); eachEvalColIndex++) {
 			Cell cell = row
@@ -853,16 +865,13 @@ public class RulesImpl implements Rules {
 			if (cell != null) {
 				if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
 						.getCellType().equalsIgnoreCase("Date")) {
-					/*
-					 * cell.setCellValue(new Date());
-					 * cell.setCellStyle(dateCellStyle);
-					 */
+					cell.setCellValue(new Date());
+					cell.setCellStyle(dateCellStyle);
 				}
 				cell.setCellFormula(rule.getEvaluateFormula().getCell()[eachEvalColIndex]
 						.getFormula());
 				evaluator.evaluate(cell);
-			} else {
-				setBreaker(true);
+				dataFormatter.formatCellValue(cell);
 			}
 		}
 	}
@@ -872,15 +881,16 @@ public class RulesImpl implements Rules {
 	 * @param index
 	 * @param typeConvertedCellValue
 	 * @param narrowDownTo
+	 * @param evaluator
 	 */
 	private void validateValuesToFilter(Row row, int index,
-			NarrowDownTo narrowDownTo) {
+			NarrowDownTo narrowDownTo, FormulaEvaluator evaluator) {
 		String valueToFilter = null;
 		String typeConvertedCellValue = null;
 		int filterColCellType = row.getCell(narrowDownTo.getFilterColIndex())
 				.getCellType();
 		typeConvertedCellValue = typeConvertCellValue(row, narrowDownTo,
-				filterColCellType);
+				filterColCellType, evaluator);
 		if (narrowDownTo.getValuesToFilter().size() == 1) {
 			valueToFilter = narrowDownTo.getValuesToFilter().get(0);
 			if (valueToFilter.contains(DashboardConstants.BLANK_CELL_STR)) {

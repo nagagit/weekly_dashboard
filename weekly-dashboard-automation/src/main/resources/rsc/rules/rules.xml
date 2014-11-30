@@ -157,7 +157,6 @@
 			<cell>
 				<header>RCA Age</header>
 				<formula>NOW()-D3-1</formula>
-				<cellType>Date</cellType>
 			</cell>
 		</evaluateFormula>
 		<type>EvaluateFormula</type>
@@ -564,7 +563,9 @@
 				</update>
 			</updates>
 		</rule> -->
-		<rule>
+		
+		
+		<!-- <rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
 				<sheetToFilter>Daily Data</sheetToFilter>
@@ -760,7 +761,7 @@
 					<valueToUpdate>*</valueToUpdate>
 				</update>
 			</updates>
-		</rule>
+		</rule> 
 		<rule>
 			
 				<filter>
@@ -777,7 +778,7 @@
 						<narrowDownTo>
 							<colToFilter>Tracking Status</colToFilter>
 							<values>
-								<valuesToFilter>*Awaiting Deployment to SIT</valuesToFilter>
+								<valuesToFilter>*Awaiting Deployment to ST</valuesToFilter>
 							</values>
 						</narrowDownTo>
 					</narrowDownTos>
@@ -895,7 +896,7 @@
 		</rule>
 		<rule>
 			
-				<filter>
+				<filter>	
 					<fileToFilter>Mini_Dashboard.xls</fileToFilter>
 					<sheetToFilter>Daily Data</sheetToFilter>
 					<narrowDownTos>
@@ -931,7 +932,7 @@
 					<valueToUpdate>RCA completed</valueToUpdate>
 				</update>
 			</updates>
-		</rule>
+		</rule>-->
 		<rule>
 			<evaluateFormula>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
