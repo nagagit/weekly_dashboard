@@ -7,15 +7,45 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class NarrowDownTo implements Serializable{
+public class NarrowDownTo implements Serializable {
 
 	/**
 	 * serialVersionUID
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -7856249150057248605L;
 	private String colToFilter;
 	private List<String> valuesToFilter;
 	private boolean filterColADate;
+	private int filterColIndex = -1;
+	private int rowCountColIndex = -1;
+
+	/**
+	 * @return the filterColIndex
+	 */
+	public int getFilterColIndex() {
+		return filterColIndex;
+	}
+
+	/**
+	 * @param filterColIndex the filterColIndex to set
+	 */
+	public void setFilterColIndex(int filterColIndex) {
+		this.filterColIndex = filterColIndex;
+	}
+
+	/**
+	 * @return the rowCountColIndex
+	 */
+	public int getRowCountColIndex() {
+		return rowCountColIndex;
+	}
+
+	/**
+	 * @param rowCountColIndex the rowCountColIndex to set
+	 */
+	public void setRowCountColIndex(int rowCountColIndex) {
+		this.rowCountColIndex = rowCountColIndex;
+	}
 
 	/**
 	 * @return the colToFilter
@@ -56,11 +86,22 @@ public class NarrowDownTo implements Serializable{
 	}
 
 	/**
-	 * @param filterColADate the filterColADate to set
+	 * @param filterColADate
+	 *            the filterColADate to set
 	 */
 	public void setFilterColADate(boolean filterColADate) {
 		this.filterColADate = filterColADate;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "NarrowDownTo [colToFilter=" + colToFilter + ", valuesToFilter="
+				+ valuesToFilter + ", filterColADate=" + filterColADate
+				+ ", filterColIndex=" + filterColIndex + ", rowCountColIndex="
+				+ rowCountColIndex + "]";
+	}
 
 }

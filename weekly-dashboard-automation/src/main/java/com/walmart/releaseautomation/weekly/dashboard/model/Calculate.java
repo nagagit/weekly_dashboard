@@ -43,4 +43,13 @@ public class Calculate implements Serializable {
 		this.calcRowsCount = calcRowsCount;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Calculate [forEach=" + forEach + ", calcRowsCount="
+				+ calcRowsCount + "]";
+	}
+
 }

@@ -15,7 +15,7 @@ public interface DashboardConstants {
 
 	public static enum RULES {
 		FILTERANDUPDATE(1), COPYDATA(2), FORMATCOLUMN(3), EVALUATEFORMULA(4), DELETEDATA(
-				5), FILTER(6), EXECUTEMACRO(7);
+				5), FILTER(6), EXECUTEMACRO(7), FILTERANDEVALUATE(8);
 
 		int ruleNbr = 0;
 

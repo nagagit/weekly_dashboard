@@ -19,4 +19,6 @@ public interface Rules {
 	void deleteData(Rule rule);
 
 	void executeMacro(Rule rule) throws IOException, InterruptedException;
+
+	void filterAndEvaluate(Rule rule) throws IOException;
 }

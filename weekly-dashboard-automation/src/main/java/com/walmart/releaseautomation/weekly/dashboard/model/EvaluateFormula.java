@@ -1,27 +1,14 @@
 package com.walmart.releaseautomation.weekly.dashboard.model;
 
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class EvaluateFormula {
-	private String fromFile;
+	private String fileToFilter;
 	private String fromSheet;
 	private Cell[] cell;
-
-	/**
-	 * @return the fromFile
-	 */
-	public String getFromFile() {
-		return fromFile;
-	}
-
-	/**
-	 * @param fromFile
-	 *            the fromFile to set
-	 */
-	public void setFromFile(String fromFile) {
-		this.fromFile = fromFile;
-	}
 
 	/**
 	 * @return the fromSheet
@@ -51,6 +38,29 @@ public class EvaluateFormula {
 	 */
 	public void setCell(Cell[] cell) {
 		this.cell = cell;
+	}
+
+	/**
+	 * @return the fileToFilter
+	 */
+	public String getFileToFilter() {
+		return fileToFilter;
+	}
+
+	/**
+	 * @param fileToFilter the fileToFilter to set
+	 */
+	public void setFileToFilter(String fileToFilter) {
+		this.fileToFilter = fileToFilter;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "EvaluateFormula [fileToFilter=" + fileToFilter + ", fromSheet="
+				+ fromSheet + ", cell=" + Arrays.toString(cell) + "]";
 	}
 
 }

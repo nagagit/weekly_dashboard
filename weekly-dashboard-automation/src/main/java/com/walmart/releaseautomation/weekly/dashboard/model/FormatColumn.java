@@ -1,28 +1,15 @@
 package com.walmart.releaseautomation.weekly.dashboard.model;
 
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class FormatColumn {
-	private String fromFile;
+	private String fileToFilter;
 	private String sheet;
 	private String[] onColumns;
 	private String cellTypeformat;
-
-	/**
-	 * @return the fromFile
-	 */
-	public String getFromFile() {
-		return fromFile;
-	}
-
-	/**
-	 * @param fromFile
-	 *            the fromFile to set
-	 */
-	public void setFromFile(String fromFile) {
-		this.fromFile = fromFile;
-	}
 
 	/**
 	 * @return the cellTypeformat
@@ -65,6 +52,30 @@ public class FormatColumn {
 	 */
 	public void setOnColumns(String[] onColumns) {
 		this.onColumns = onColumns;
+	}
+
+	/**
+	 * @return the fileToFilter
+	 */
+	public String getFileToFilter() {
+		return fileToFilter;
+	}
+
+	/**
+	 * @param fileToFilter the fileToFilter to set
+	 */
+	public void setFileToFilter(String fileToFilter) {
+		this.fileToFilter = fileToFilter;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "FormatColumn [fileToFilter=" + fileToFilter + ", sheet="
+				+ sheet + ", onColumns=" + Arrays.toString(onColumns)
+				+ ", cellTypeformat=" + cellTypeformat + "]";
 	}
 
 }

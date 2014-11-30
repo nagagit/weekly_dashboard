@@ -3,10 +3,11 @@ package com.walmart.releaseautomation.weekly.dashboard.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
-public class Filter implements Serializable{
+@XmlRootElement(name = "filter")
+public class Filter implements Serializable {
 
 	/**
 	 * serialVersionUID
@@ -14,7 +15,7 @@ public class Filter implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String fileToFilter;
 	private String sheetToFilter;
-	private List<NarrowDownTo> narrowDownTos;
+	private List<NarrowDownTo> narrowDownTo;
 
 	/**
 	 * @return the fileToFilter
@@ -47,18 +48,28 @@ public class Filter implements Serializable{
 	}
 
 	/**
-	 * @return the narrowDownTos
+	 * @return the narrowDownTo
 	 */
-	public List<NarrowDownTo> getNarrowDownTos() {
-		return narrowDownTos;
+	@XmlElementWrapper(name = "narrowDownTos")
+	public List<NarrowDownTo> getNarrowDownTo() {
+		return narrowDownTo;
 	}
 
 	/**
-	 * @param narrowDownTos the narrowDownTos to set
+	 * @param narrowDownTo
+	 *            the narrowDownTo to set
 	 */
-	public void setNarrowDownTos(List<NarrowDownTo> narrowDownTos) {
-		this.narrowDownTos = narrowDownTos;
+	public void setNarrowDownTo(List<NarrowDownTo> narrowDownTo) {
+		this.narrowDownTo = narrowDownTo;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Filter [fileToFilter=" + fileToFilter + ", sheetToFilter="
+				+ sheetToFilter + ", narrowDownTo=" + narrowDownTo + "]";
+	}
 
 }

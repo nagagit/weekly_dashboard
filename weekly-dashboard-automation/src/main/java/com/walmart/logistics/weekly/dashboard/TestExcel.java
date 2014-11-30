@@ -1,39 +1,75 @@
 package com.walmart.logistics.weekly.dashboard;
 
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import jxl.read.biff.BiffException;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.walmart.releaseautomation.weekly.dashboard.constants.DashboardConstants;
 import com.walmart.releaseautomation.weekly.dashboard.impl.RulesImpl;
 import com.walmart.releaseautomation.weekly.dashboard.intf.Rules;
+import com.walmart.releaseautomation.weekly.dashboard.model.Filter;
 import com.walmart.releaseautomation.weekly.dashboard.model.ListContainer;
+import com.walmart.releaseautomation.weekly.dashboard.model.NarrowDownTo;
 import com.walmart.releaseautomation.weekly.dashboard.model.Rule;
+import com.walmart.releaseautomation.weekly.dashboard.model.Update;
 
 public class TestExcel {
 
 	private String rule;
 
-	private Rules rules; 
+	private Rules rules;
 
 	public static void main(String[] args) throws IOException, JAXBException,
 			InvalidFormatException, BiffException, InterruptedException {
+
 		mockMapValues();
 		new TestExcel().readFromExcel();
+
+		/*
+		 * JAXBContext context = JAXBContext.newInstance(Rule.class); Marshaller
+		 * marshaller = context.createMarshaller(); Rule rule = new Rule();
+		 * Filter filter = new Filter(); filter.setFileToFilter("fadsfa");
+		 * filter.setSheetToFilter("fadsf"); NarrowDownTo downTo = new
+		 * NarrowDownTo(); downTo.setColToFilter("fads");
+		 * downTo.setFilterColADate(false); List<String> strings = new
+		 * ArrayList<String>(); strings.add("fdasdfd");
+		 * downTo.setValuesToFilter(strings); List<NarrowDownTo> downTos = new
+		 * ArrayList<NarrowDownTo>(); downTos.add(downTo); downTos.add(downTo);
+		 * filter.setNarrowDownTo(downTos); rule.setFilter(filter);
+		 * marshaller.marshal(rule, System.out);
+		 */
+
 	}
 
 	private static void mockMapValues() {
 		DashboardConstants.wbURLMap.put("Mini_Dashboard",
 				"C:/Users/l.naga rajesh/Documents/" + "Mini_Dashboard.xls");
-		DashboardConstants.wbURLMap.put("DefectsReport", "C:/Users/l.naga rajesh/Documents/DefectsReport.xls");
-		DashboardConstants.wbURLMap.put("Daily_Release_Dashboard", "C:/Users/l.naga rajesh/Documents/Daily_Release_Dashboard.xlsm");
-		DashboardConstants.wbURLMap.put("PMO Only", "C:/Users/l.naga rajesh/Documents/PMO Only.xls");
+		DashboardConstants.wbURLMap.put("Mini_Dashboard_lastWk",
+				"C:/Users/l.naga rajesh/Documents/"
+						+ "Mini_Dashboard_lastWk.xls");
+		DashboardConstants.wbURLMap.put("DefectsReport",
+				"C:/Users/l.naga rajesh/Documents/DefectsReport.xls");
+		DashboardConstants.wbURLMap
+				.put("Daily_Release_Dashboard",
+						"C:/Users/l.naga rajesh/Documents/Daily_Release_Dashboard.xlsm");
+		DashboardConstants.wbURLMap
+				.put("Daily_Release_Dashboard_lastWk",
+						"C:/Users/l.naga rajesh/Documents/Daily_Release_Dashboard_lastWk.xlsm");
+		DashboardConstants.wbURLMap.put("PMO Only",
+				"C:/Users/l.naga rajesh/Documents/PMO Only.xls");
 	}
 
 	public void readFromExcel() throws IOException, JAXBException,
@@ -44,8 +80,10 @@ public class TestExcel {
 		JAXBContext context = JAXBContext.newInstance(classes);
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		ListContainer<Rule> listContainer = (ListContainer<Rule>) unmarshaller
-				.unmarshal(this.getClass().getClassLoader().getResourceAsStream("rsc/rules/rules.xml"));
+				.unmarshal(this.getClass().getClassLoader()
+						.getResourceAsStream("rsc/rules/rules.xml"));
 		rules = new RulesImpl();
+		
 		for (Rule rule : listContainer.getItems()) {
 			switch (DashboardConstants.RULES.valueOf(rule.getType()
 					.toUpperCase())) {
@@ -69,9 +107,13 @@ public class TestExcel {
 			case EXECUTEMACRO:
 				rules.executeMacro(rule);
 				break;
+			case FILTERANDEVALUATE:
+				rules.filterAndEvaluate(rule);
 			default:
 				break;
 			}
+			System.out.println("*****************COMPLETED**************" );
+			System.out.println(rule.toString());
 			ruleIndex = ruleIndex + 1;
 		}
 	}

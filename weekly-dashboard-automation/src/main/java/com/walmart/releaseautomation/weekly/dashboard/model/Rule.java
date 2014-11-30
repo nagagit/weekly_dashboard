@@ -3,6 +3,7 @@ package com.walmart.releaseautomation.weekly.dashboard.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "rule")
@@ -13,14 +14,14 @@ public class Rule implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String type;
 	private Filter filter;
-	private List<Update> updates;
+	private List<Update> update;
+	private List<Assignment> assignment;
 	private Calculate calculate;
 	private CopyData copyData;
 	private DeleteData deleteData;
 	private EvaluateFormula evaluateFormula;
 	private ExecuteMacro executeMacro;
 	private FormatColumn formatColumn;
-	private boolean isFilterColADate;
 	private RowCount count;
 
 	/**
@@ -144,21 +145,6 @@ public class Rule implements Serializable {
 	}
 
 	/**
-	 * @return the isFilterColADate
-	 */
-	public boolean isFilterColADate() {
-		return isFilterColADate;
-	}
-
-	/**
-	 * @param isFilterColADate
-	 *            the isFilterColADate to set
-	 */
-	public void setFilterColADate(boolean isFilterColADate) {
-		this.isFilterColADate = isFilterColADate;
-	}
-
-	/**
 	 * @return the count
 	 */
 	public RowCount getCount() {
@@ -174,17 +160,49 @@ public class Rule implements Serializable {
 	}
 
 	/**
-	 * @return the updates
+	 * @return the update
 	 */
-	public List<Update> getUpdates() {
-		return updates;
+	@XmlElementWrapper(name = "updates")
+	public List<Update> getUpdate() {
+		return update;
 	}
 
 	/**
-	 * @param updates the updates to set
+	 * @param update
+	 *            the update to set
 	 */
-	public void setUpdates(List<Update> updates) {
-		this.updates = updates;
+	public void setUpdate(List<Update> update) {
+		this.update = update;
 	}
 
+	/**
+	 * @return the assignment
+	 */
+	@XmlElementWrapper(name = "assignments")
+	public List<Assignment> getAssignment() {
+		return assignment;
+	}
+
+	/**
+	 * @param assignment
+	 *            the assignment to set
+	 */
+	public void setAssignment(List<Assignment> assignment) {
+		this.assignment = assignment;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Rule [type=" + type + ", filter=" + filter + ", update="
+				+ update + ", assignment=" + assignment + ", calculate="
+				+ calculate + ", copyData=" + copyData + ", deleteData="
+				+ deleteData + ", evaluateFormula=" + evaluateFormula
+				+ ", executeMacro=" + executeMacro + ", formatColumn="
+				+ formatColumn + ", count=" + count + "]";
+	}
+
+	
 }

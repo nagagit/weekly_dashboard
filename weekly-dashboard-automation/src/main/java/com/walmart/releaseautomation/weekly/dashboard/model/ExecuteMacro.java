@@ -1,5 +1,7 @@
 package com.walmart.releaseautomation.weekly.dashboard.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -8,6 +10,7 @@ public class ExecuteMacro {
 	private String onSheet;
 	private String macroName;
 	private String scriptName;
+	private List<String> params;
 
 	/**
 	 * @return the onFile
@@ -66,6 +69,30 @@ public class ExecuteMacro {
 	 */
 	public void setScriptName(String scriptName) {
 		this.scriptName = scriptName;
+	}
+
+	/**
+	 * @return the params
+	 */
+	public List<String> getParams() {
+		return params;
+	}
+
+	/**
+	 * @param params the params to set
+	 */
+	public void setParams(List<String> params) {
+		this.params = params;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ExecuteMacro [onFile=" + onFile + ", onSheet=" + onSheet
+				+ ", macroName=" + macroName + ", scriptName=" + scriptName
+				+ ", params=" + params + "]";
 	}
 
 }

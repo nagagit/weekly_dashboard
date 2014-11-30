@@ -1,5 +1,7 @@
 package com.walmart.releaseautomation.weekly.dashboard.model;
 
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -99,6 +101,18 @@ public class CopyData {
 	 */
 	public void setPasteToSheet(String pasteToSheet) {
 		this.pasteToSheet = pasteToSheet;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "CopyData [copyFromFile=" + copyFromFile + ", copyFromSheet="
+				+ copyFromSheet + ", copyFromColumns="
+				+ Arrays.toString(copyFromColumns) + ", pasteToFile="
+				+ pasteToFile + ", pasteToSheet=" + pasteToSheet
+				+ ", pasteFromColumnIndex=" + pasteFromColumnIndex + "]";
 	}
 
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "update")
 public class Update implements Serializable {
 	/**
 	 * serialVersionUID
@@ -15,6 +15,7 @@ public class Update implements Serializable {
 	private String fileToUpdate;
 	private String sheetToUpdate;
 	private boolean updateRowCntFromMap;
+	private int updateColIndex = -1;
 
 	/**
 	 * @return the colToUpdate
@@ -84,10 +85,37 @@ public class Update implements Serializable {
 	}
 
 	/**
-	 * @param updateRowCntFromMap the updateRowCntFromMap to set
+	 * @param updateRowCntFromMap
+	 *            the updateRowCntFromMap to set
 	 */
 	public void setUpdateRowCntFromMap(boolean updateRowCntFromMap) {
 		this.updateRowCntFromMap = updateRowCntFromMap;
+	}
+
+	/**
+	 * @return the updateColIndex
+	 */
+	public int getUpdateColIndex() {
+		return updateColIndex;
+	}
+
+	/**
+	 * @param updateColIndex the updateColIndex to set
+	 */
+	public void setUpdateColIndex(int updateColIndex) {
+		this.updateColIndex = updateColIndex;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Update [colToUpdate=" + colToUpdate + ", valueToUpdate="
+				+ valueToUpdate + ", fileToUpdate=" + fileToUpdate
+				+ ", sheetToUpdate=" + sheetToUpdate + ", updateRowCntFromMap="
+				+ updateRowCntFromMap + ", updateColIndex=" + updateColIndex
+				+ "]";
 	}
 
 }

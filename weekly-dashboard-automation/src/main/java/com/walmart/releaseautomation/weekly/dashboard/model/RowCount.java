@@ -12,6 +12,7 @@ public class RowCount {
 	private String countForValues;
 	private boolean storeCountInMap;
 	private String countOnSheet;
+	private int rowCountColIndex = -1;
 
 	/**
 	 * @return the countFromCol
@@ -69,6 +70,31 @@ public class RowCount {
 	 */
 	public void setCountOnSheet(String countOnSheet) {
 		this.countOnSheet = countOnSheet;
+	}
+
+	/**
+	 * @return the rowCountColIndex
+	 */
+	public int getRowCountColIndex() {
+		return rowCountColIndex;
+	}
+
+	/**
+	 * @param rowCountColIndex the rowCountColIndex to set
+	 */
+	public void setRowCountColIndex(int rowCountColIndex) {
+		this.rowCountColIndex = rowCountColIndex;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "RowCount [countFromCol=" + countFromCol + ", countForValues="
+				+ countForValues + ", storeCountInMap=" + storeCountInMap
+				+ ", countOnSheet=" + countOnSheet + ", rowCountColIndex="
+				+ rowCountColIndex + "]";
 	}
 
 }
