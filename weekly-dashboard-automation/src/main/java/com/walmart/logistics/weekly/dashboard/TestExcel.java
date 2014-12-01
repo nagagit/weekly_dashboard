@@ -1,30 +1,20 @@
 package com.walmart.logistics.weekly.dashboard;
 
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import jxl.read.biff.BiffException;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.walmart.releaseautomation.weekly.dashboard.constants.DashboardConstants;
 import com.walmart.releaseautomation.weekly.dashboard.impl.RulesImpl;
 import com.walmart.releaseautomation.weekly.dashboard.intf.Rules;
-import com.walmart.releaseautomation.weekly.dashboard.model.Filter;
 import com.walmart.releaseautomation.weekly.dashboard.model.ListContainer;
-import com.walmart.releaseautomation.weekly.dashboard.model.NarrowDownTo;
 import com.walmart.releaseautomation.weekly.dashboard.model.Rule;
-import com.walmart.releaseautomation.weekly.dashboard.model.Update;
 
 public class TestExcel {
 
@@ -70,6 +60,10 @@ public class TestExcel {
 						"C:/Users/l.naga rajesh/Documents/Daily_Release_Dashboard_lastWk.xlsm");
 		DashboardConstants.wbURLMap.put("PMO Only",
 				"C:/Users/l.naga rajesh/Documents/PMO Only.xls");
+		DashboardConstants.wbURLMap.put("LOE_Tracker",
+				"C:/Users/l.naga rajesh/Documents/LOE_Tracker.xls");
+		DashboardConstants.wbURLMap.put("Business Priority CRs Defects",
+				"C:/Users/l.naga rajesh/Documents/Business Priority CRs Defects.xls");
 	}
 
 	public void readFromExcel() throws IOException, JAXBException,

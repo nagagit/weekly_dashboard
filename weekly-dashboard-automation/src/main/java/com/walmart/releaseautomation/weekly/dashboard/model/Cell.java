@@ -1,5 +1,7 @@
 package com.walmart.releaseautomation.weekly.dashboard.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -7,6 +9,7 @@ public class Cell {
 	private String header;
 	private String formula;
 	private String cellType;
+	private List<String> addRefLinks;
 
 	/**
 	 * @return the header
@@ -52,5 +55,20 @@ public class Cell {
 	public void setCellType(String cellType) {
 		this.cellType = cellType;
 	}
+
+	/**
+	 * @return the addRefLinks
+	 */
+	public List<String> getAddRefLinks() {
+		return addRefLinks;
+	}
+
+	/**
+	 * @param addRefLinks the addRefLinks to set
+	 */
+	public void setAddRefLinks(List<String> addRefLinks) {
+		this.addRefLinks = addRefLinks;
+	}
+
 
 }

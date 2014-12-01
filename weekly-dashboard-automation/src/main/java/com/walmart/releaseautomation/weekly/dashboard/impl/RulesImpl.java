@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -244,6 +246,9 @@ public class RulesImpl implements Rules {
 					String formatValue = dataFormatter.formatCellValue(
 							row.getCell(narrowDownTo.getFilterColIndex()),
 							evaluator);
+					if (formatValue.equalsIgnoreCase("#N/A")) {
+						throw new RuntimeException();
+					}
 					Integer.parseInt(formatValue);
 					formulaResultType = Cell.CELL_TYPE_NUMERIC;
 				} catch (NumberFormatException e) {
@@ -686,7 +691,7 @@ public class RulesImpl implements Rules {
 		if (rule.getExecuteMacro().getParams() != null
 				&& !rule.getExecuteMacro().getParams().isEmpty()) {
 			for (String param : rule.getExecuteMacro().getParams()) {
-				cmdBuilder.append(" ").append(param);
+				cmdBuilder.append(" ").append("\"").append(param).append("\"");
 			}
 		}
 		Process p = null;
@@ -821,6 +826,9 @@ public class RulesImpl implements Rules {
 				filter.getSheetToFilter(), filterWorkbook);
 		FormulaEvaluator evaluator = filterWorkbook.getCreationHelper()
 				.createFormulaEvaluator();
+		HSSFCellStyle dateCellStyle = filterWorkbook.createCellStyle();
+		short df = filterWorkbook.createDataFormat().getFormat("dd-MM-yyyy");
+		dateCellStyle.setDataFormat(df);
 		for (Row row : filterSheet) {
 			bindFilterAndRowCntColIndexes(rule, filter, row);
 			bindEvalColIndexes(rule, row);
@@ -838,7 +846,7 @@ public class RulesImpl implements Rules {
 				}
 				if (isRowMatchesWithFilter()) {
 					// Evaluate Here
-					evaluateCells(rule, evaluator, row, null);
+					evaluateCells(rule, evaluator, row, dateCellStyle);
 				}
 			}
 		}
@@ -855,18 +863,47 @@ public class RulesImpl implements Rules {
 	 * @param evaluator
 	 * @param row
 	 * @param dateCellStyle
+	 * @throws IOException
 	 */
 	private void evaluateCells(Rule rule, FormulaEvaluator evaluator, Row row,
-			HSSFCellStyle dateCellStyle) {
+			HSSFCellStyle dateCellStyle) throws IOException {
+		HSSFWorkbook refWb = null;
+		FormulaEvaluator refWbFormulaEvaluator = null;
+		Map<String, FormulaEvaluator> evaluators = new HashMap<String, FormulaEvaluator>();
+		String[] workbookNames = new String[rule.getEvaluateFormula().getCell().length];
+		HSSFFormulaEvaluator[] hssfFormulaEvaluators = new HSSFFormulaEvaluator[rule
+				.getEvaluateFormula().getCell().length];
 		for (int eachEvalColIndex = 0; eachEvalColIndex < getToEvalColIndexes()
 				.size(); eachEvalColIndex++) {
 			Cell cell = row
 					.getCell(getToEvalColIndexes().get(eachEvalColIndex));
 			if (cell != null) {
 				if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-						.getCellType().equalsIgnoreCase("Date")) {
+						.getCellType() != null
+						&& rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+								.getCellType().equalsIgnoreCase("Date")) {
 					cell.setCellValue(new Date());
 					cell.setCellStyle(dateCellStyle);
+				}
+				if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+						.getAddRefLinks() != null
+						&& !rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+								.getAddRefLinks().isEmpty()) {
+					// Set up the workbook environment for evaluation
+					for (String refLink : rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+							.getAddRefLinks()) {
+						workbookNames[eachEvalColIndex] = refLink;
+						refWb = (HSSFWorkbook) DashboardUtility
+								.getWorkBook(DashboardConstants.wbURLMap
+										.get(refLink.split(".x")[0]));
+						refWbFormulaEvaluator = refWb.getCreationHelper()
+								.createFormulaEvaluator();
+						hssfFormulaEvaluators[eachEvalColIndex] = (HSSFFormulaEvaluator) refWbFormulaEvaluator;
+						evaluators.put(refLink, refWbFormulaEvaluator);
+					}
+					HSSFFormulaEvaluator.setupEnvironment(workbookNames,
+							hssfFormulaEvaluators);
+					evaluator.setupReferencedWorkbooks(evaluators);
 				}
 				cell.setCellFormula(rule.getEvaluateFormula().getCell()[eachEvalColIndex]
 						.getFormula());

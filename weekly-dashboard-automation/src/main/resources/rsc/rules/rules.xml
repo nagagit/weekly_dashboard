@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listContainer>
 	<items>
-<!--  	<rule>
+ 	<rule>
 		<executeMacro>
 			<onFile>Daily_Release_Dashboard.xlsm</onFile>
 			<scriptName>makeMiniVersionCopyOfDashboardSheet.vbs</scriptName>
@@ -144,7 +144,7 @@
 			<params>Mini_Dashboard.xls</params>
 		</executeMacro>
 		<type>ExecuteMacro</type>
-	</rule> 
+	</rule>  
 	<rule>
 		<evaluateFormula>
 			<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -423,6 +423,9 @@
 				</update>
 			</updates>
 		</rule>
+		
+		
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -562,10 +565,10 @@
 					<valueToUpdate>Backlog</valueToUpdate>
 				</update>
 			</updates>
-		</rule> -->
+		</rule>
 		
 		
-		<!-- <rule>
+		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
 				<sheetToFilter>Daily Data</sheetToFilter>
@@ -674,9 +677,7 @@
 						<colToFilter>RCA Status</colToFilter>
 						<values>
 							<valuesToFilter>Triage for Closure</valuesToFilter>
-							<valuesToFilter>Potential
-								CR
-							</valuesToFilter>
+							<valuesToFilter>Potential CR</valuesToFilter>
 							<valuesToFilter>Translation</valuesToFilter>
 						</values>
 					</narrowDownTo>
@@ -720,17 +721,15 @@
 			<type>FilterAndEvaluate</type>
 			<evaluateFormula>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
-				<fromSheet>Daily
-					Data
-				</fromSheet>
+				<fromSheet>Daily Data</fromSheet>
 				<cell>
 					<header>RCA Classification</header>
-					<formula>+VLOOKUP(C2,Lookup!$A$1:$C$10813,3,0)</formula>
+					<formula>+VLOOKUP(C:C,Lookup!$A$1:$C$10813,3,0)</formula>
 					<cellType>String</cellType>
 				</cell>
 				<cell>
 					<header>RCA Grouping</header>
-					<formula>+VLOOKUP(AE2,Lookup!$H$2:$I$64,2,0)</formula>
+					<formula>+VLOOKUP(AE:AE,Lookup!$H$2:$I$64,2,0)</formula>
 					<cellType>String</cellType>
 				</cell>
 			</evaluateFormula>
@@ -744,9 +743,7 @@
 						<narrowDownTo>
 							<colToFilter>RCA Status</colToFilter>
 							<values>
-								<valuesToFilter>Triage for
-									Closure
-								</valuesToFilter>
+								<valuesToFilter>Triage for Closure</valuesToFilter>
 								<valuesToFilter>Potential CR</valuesToFilter>
 								<valuesToFilter>Translation</valuesToFilter>
 							</values>
@@ -932,7 +929,7 @@
 					<valueToUpdate>RCA completed</valueToUpdate>
 				</update>
 			</updates>
-		</rule>-->
+		</rule>
 		<rule>
 			<evaluateFormula>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -945,7 +942,8 @@
 			</evaluateFormula>
 			<type>EvaluateFormula</type>
 		</rule>
-		<rule>
+		 
+		 <rule>
 			
 				<filter>
 					<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -1004,24 +1002,59 @@
 			</updates>
 		</rule>
 		<rule>
+		<executeMacro>
+			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
+			<scriptName>saveFileInDiffExtension.vbs</scriptName>
+			<macroName>saveAsXlsx</macroName>
+			<params>Mini_Dashboard.xls</params>
+			<params>Mini_Dashboard.xlsx</params>
+		</executeMacro>
+		<type>ExecuteMacro</type>
+	</rule>
+		<!--
+	<rule>
+		<executeMacro>
+			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
+			<scriptName>saveFileInDiffExtension.vbs</scriptName>
+			<macroName>saveAsXls</macroName>
+			<params>LOE_Tracker.xls</params>
+			<params>LOE_Tracker.xls</params>
+		</executeMacro>
+		<type>ExecuteMacro</type>
+	</rule>
+	<rule>
+		<executeMacro>
+			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
+			<scriptName>saveFileInDiffExtension.vbs</scriptName>
+			<macroName>saveAsXls</macroName>
+			<params>Business Priority CRs Defects.xlsx</params>
+			<params>Business Priority CRs Defects.xls</params>
+		</executeMacro>
+		<type>ExecuteMacro</type>
+	</rule>
+			 
+	<rule>
 			<evaluateFormula>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
 				<fromSheet>Daily Data</fromSheet>
 				<cell>
 					<header>HL LOE Status</header>
-					<formula>+VLOOKUP(C:C,[LOE_Tracker.xlsx]Defects_Sheet!$B$1:$Z$1768,16,TRUE)</formula>
+					<formula>+VLOOKUP(C:C,'[LOE_Tracker.xlsx]Defects_Sheet'!$B$1:$Z$1768,16,TRUE)</formula>
 					<cellType>String</cellType>
+					<addRefLinks>LOE_Tracker.xlsx</addRefLinks>
 				</cell>
 			</evaluateFormula>
 			<type>EvaluateFormula</type>
 		</rule>
+
+		
 		<rule>
 			<evaluateFormula>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
 				<fromSheet>Daily Data</fromSheet>
 				<cell>
 					<header>T-Shirt Size</header>
-					<formula>+VLOOKUP(C:C,[LOE_Tracker.xlsx]Defects_Sheet!$B$1:$Z$1768,23,TRUE)</formula>
+					<formula>+VLOOKUP(C:C,[LOE_Tracker.xls]Defects_Sheet!$B$1:$Z$1768,23,TRUE)</formula>
 					<cellType>String</cellType>
 				</cell>
 			</evaluateFormula>
@@ -1139,7 +1172,7 @@
 			</evaluateFormula>
 			<type>EvaluateFormula</type>
 		</rule>
-		<!-- <rule>
+		 <rule>
 			
 				<filter>
 					<fileToFilter>Mini_Dashboard_lastWk.xls</fileToFilter>
@@ -1195,6 +1228,6 @@
 				</bind>
 			</binds>
 		</rule>
- -->	</items>
+	 --></items>
 </listContainer>
 
