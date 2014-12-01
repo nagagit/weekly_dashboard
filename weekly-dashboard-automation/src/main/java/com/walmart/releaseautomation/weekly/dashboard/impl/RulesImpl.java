@@ -352,6 +352,25 @@ public class RulesImpl implements Rules {
 	}
 
 	/**
+	 * @param rule
+	 * @param filter
+	 * @param row
+	 */
+	private int getRowBrkFilterColIndex(Row row, String header) {
+		int colIndex = -1;
+		for (Cell cell : row) {
+			if (colIndex == -1) {
+				if (cell.getStringCellValue().equals(header)) {
+					colIndex = cell.getColumnIndex();
+				}
+			} else {
+				break;
+			}
+		}
+		return colIndex;
+	}
+
+	/**
 	 * @param index
 	 */
 	private void assertFilterMatch(int index) {
@@ -606,6 +625,7 @@ public class RulesImpl implements Rules {
 	}
 
 	public void evaluateFormula(Rule rule) throws IOException {
+		int rowBrkCheckColIndex = 0;
 		HSSFWorkbook evalFrmWB = (HSSFWorkbook) DashboardUtility
 				.getWorkBook(DashboardConstants.wbURLMap.get(rule
 						.getEvaluateFormula().getFileToFilter().split(".x")[0]));
@@ -618,7 +638,13 @@ public class RulesImpl implements Rules {
 		dateCellStyle.setDataFormat(df);
 
 		for (Row row : sheet) {
-			if (row.isFormatted() && getToEvalColIndexes().isEmpty()) {
+			if (row.getRowNum() == 0) {
+				rowBrkCheckColIndex = getRowBrkFilterColIndex(row, "Defect ID");
+			}
+			if (row.getCell(rowBrkCheckColIndex) == null) {
+				break;
+			}
+			if (getToEvalColIndexes().isEmpty()) {
 				bindEvalColIndexes(rule, row);
 			} else {
 				evaluator = evalFrmWB.getCreationHelper()
@@ -877,39 +903,41 @@ public class RulesImpl implements Rules {
 				.size(); eachEvalColIndex++) {
 			Cell cell = row
 					.getCell(getToEvalColIndexes().get(eachEvalColIndex));
-			if (cell != null) {
-				if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-						.getCellType() != null
-						&& rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-								.getCellType().equalsIgnoreCase("Date")) {
-					cell.setCellValue(new Date());
-					cell.setCellStyle(dateCellStyle);
-				}
-				if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-						.getAddRefLinks() != null
-						&& !rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-								.getAddRefLinks().isEmpty()) {
-					// Set up the workbook environment for evaluation
-					for (String refLink : rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-							.getAddRefLinks()) {
-						workbookNames[eachEvalColIndex] = refLink;
-						refWb = (HSSFWorkbook) DashboardUtility
-								.getWorkBook(DashboardConstants.wbURLMap
-										.get(refLink.split(".x")[0]));
-						refWbFormulaEvaluator = refWb.getCreationHelper()
-								.createFormulaEvaluator();
-						hssfFormulaEvaluators[eachEvalColIndex] = (HSSFFormulaEvaluator) refWbFormulaEvaluator;
-						evaluators.put(refLink, refWbFormulaEvaluator);
-					}
-					HSSFFormulaEvaluator.setupEnvironment(workbookNames,
-							hssfFormulaEvaluators);
-					evaluator.setupReferencedWorkbooks(evaluators);
-				}
-				cell.setCellFormula(rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-						.getFormula());
-				evaluator.evaluate(cell);
-				dataFormatter.formatCellValue(cell);
+			if (cell == null) {
+				cell = row.createCell(getToEvalColIndexes().get(
+						eachEvalColIndex));
 			}
+			if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+					.getCellType() != null
+					&& rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+							.getCellType().equalsIgnoreCase("Date")) {
+				cell.setCellValue(new Date());
+				cell.setCellStyle(dateCellStyle);
+			}
+			if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+					.getAddRefLinks() != null
+					&& !rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+							.getAddRefLinks().isEmpty()) {
+				// Set up the workbook environment for evaluation
+				for (String refLink : rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+						.getAddRefLinks()) {
+					workbookNames[eachEvalColIndex] = refLink;
+					refWb = (HSSFWorkbook) DashboardUtility
+							.getWorkBook(DashboardConstants.wbURLMap
+									.get(refLink.split(".x")[0]));
+					refWbFormulaEvaluator = refWb.getCreationHelper()
+							.createFormulaEvaluator();
+					hssfFormulaEvaluators[eachEvalColIndex] = (HSSFFormulaEvaluator) refWbFormulaEvaluator;
+					evaluators.put(refLink, refWbFormulaEvaluator);
+				}
+				HSSFFormulaEvaluator.setupEnvironment(workbookNames,
+						hssfFormulaEvaluators);
+				evaluator.setupReferencedWorkbooks(evaluators);
+			}
+			cell.setCellFormula(rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+					.getFormula());
+			evaluator.evaluate(cell);
+			dataFormatter.formatCellValue(cell);
 		}
 	}
 
