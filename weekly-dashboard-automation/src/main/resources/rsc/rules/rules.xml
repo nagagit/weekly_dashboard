@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listContainer>
 	<items>
- 	<rule>
+<!--  	<rule>
 		<executeMacro>
 			<onFile>Daily_Release_Dashboard.xlsm</onFile>
 			<scriptName>makeMiniVersionCopyOfDashboardSheet.vbs</scriptName>
@@ -37,9 +37,7 @@
 			<sheetToFilter>0</sheetToFilter>
 			<narrowDownTos>
 				<narrowDownTo>
-					<colToFilter>Defect
-						Root Cause
-					</colToFilter>
+					<colToFilter>Defect Root Cause</colToFilter>
 					<values>
 						<valuesToFilter>!Blanks</valuesToFilter>
 					</values>
@@ -53,7 +51,8 @@
 				<valueToUpdate>Y</valueToUpdate>
 			</update>
 		</updates>
-	</rule>
+	</rule> 
+	
 	<rule>
 		<filter>
 			<fileToFilter>DefectsReport.xls</fileToFilter>
@@ -62,13 +61,15 @@
 				<narrowDownTo>
 					<colToFilter>Team</colToFilter>
 					<values>
-						<valuesToFilter>ISD</valuesToFilter>
-						<valuesToFilter>eDC</valuesToFilter>
+						<valuesToFilter>*ISD*</valuesToFilter>
+						<valuesToFilter>*eDC*</valuesToFilter>
 						<valuesToFilter>WFM</valuesToFilter>
-						<valuesToFilter>Upstreaming</valuesToFilter>
-						<valuesToFilter>Japan</valuesToFilter>
+						<valuesToFilter>*Upstreaming*</valuesToFilter>
+						<valuesToFilter>*Japan*</valuesToFilter>
 						<valuesToFilter>YMS</valuesToFilter>
-						<valuesToFilter>GLS</valuesToFilter>
+						<valuesToFilter>GLS-Unified</valuesToFilter>
+						<valuesToFilter>Global Automation</valuesToFilter>
+						<valuesToFilter>*USG*</valuesToFilter>
 					</values>
 				</narrowDownTo>
 			</narrowDownTos>
@@ -81,6 +82,7 @@
 			</update>
 		</updates>
 	</rule>
+	
 	<rule>
 		<filter>
 			<fileToFilter>DefectsReport.xls</fileToFilter>
@@ -89,33 +91,7 @@
 				<narrowDownTo>
 					<colToFilter>Team</colToFilter>
 					<values>
-						<valuesToFilter>OP</valuesToFilter>
-						<valuesToFilter>T1</valuesToFilter>
-						<valuesToFilter>Track 3</valuesToFilter>
-						<valuesToFilter>UI .Net</valuesToFilter>
-						<valuesToFilter>Testing</valuesToFilter>
-						<valuesToFilter>QA</valuesToFilter>
-						<valuesToFilter>BzTax</valuesToFilter>
-						<valuesToFilter>MF</valuesToFilter>
-						<valuesToFilter>ISD</valuesToFilter>
-						<valuesToFilter>T1 Receiving</valuesToFilter>
-						<valuesToFilter>Track 2</valuesToFilter>
-						<valuesToFilter>T1 Invoicing</valuesToFilter>
-						<valuesToFilter>Brazil Perishable</valuesToFilter>
-						<valuesToFilter>IntlGaps</valuesToFilter>
-						<valuesToFilter>IntlExtn</valuesToFilter>
-						<valuesToFilter>China Gaps</valuesToFilter>
-						<valuesToFilter>IntlImports</valuesToFilter>
-						<valuesToFilter>AGV</valuesToFilter>
-						<valuesToFilter>IndiaGaps</valuesToFilter>
-						<valuesToFilter>EFB</valuesToFilter>
-						<valuesToFilter>Java</valuesToFilter>
-						<valuesToFilter>eDC</valuesToFilter>
-						<valuesToFilter>WFM</valuesToFilter>
-						<valuesToFilter>Upstreaming</valuesToFilter>
-						<valuesToFilter>MX Perishables</valuesToFilter>
-						<valuesToFilter>Japan</valuesToFilter>
-						<valuesToFilter>YMS</valuesToFilter>
+						<valuesToFilter>!DMR,!RMT,!YMS,!Support,!Blanks</valuesToFilter>						
 					</values>
 				</narrowDownTo>
 			</narrowDownTos>
@@ -127,7 +103,8 @@
 				<valueToUpdate>*</valueToUpdate>
 			</update>
 		</updates>
-	</rule>
+	</rule>-->
+	
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
@@ -202,6 +179,7 @@
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
+	<!--
 	<rule>
 		<filter>
 			<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -1011,7 +989,7 @@
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
-		<!--
+		
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>

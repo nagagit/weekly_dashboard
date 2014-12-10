@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -195,11 +196,40 @@ public class RulesImpl implements Rules {
 	 */
 	private void proceedNonBlankCellValidation(int index,
 			String typeConvertedCellValue, String valueToFilter) {
+		boolean isValMatches = false;
+		boolean isValNotMatchesAllExcludeFilterValues = false;
 		if (!valueToFilter.contains("*")) {
-			boolean isValMatches = valueToFilter
+			String[] notInFilterValues = null;
+			isValMatches = valueToFilter
 					.equalsIgnoreCase(typeConvertedCellValue);
-			if (valueToFilter.contains("!") && !isValMatches) {
-				assertFilterMatch(index);
+			if (valueToFilter.contains("!") && valueToFilter.contains(",")) {
+				notInFilterValues = valueToFilter.split(",");
+				for (int i = 0; i < notInFilterValues.length; i++) {
+					isValMatches = notInFilterValues[i].replace("!", "")
+							.equalsIgnoreCase(typeConvertedCellValue);
+					/*
+					 * Cell Value should match all mentioned excluded values and
+					 * it should be any of other excluded value too.
+					 */ 
+					if (!isValMatches
+							&& !Arrays.asList(notInFilterValues).contains(
+									"!" + typeConvertedCellValue)) {
+						if (i != 0) {
+							isValNotMatchesAllExcludeFilterValues = isValNotMatchesAllExcludeFilterValues && true;
+						} else {
+							isValNotMatchesAllExcludeFilterValues = true;
+						}
+					} else {
+						if (i != 0) {
+							isValNotMatchesAllExcludeFilterValues = isValNotMatchesAllExcludeFilterValues && false;
+						} else {
+							isValNotMatchesAllExcludeFilterValues = false;
+						}
+					}
+				}
+				if (isValNotMatchesAllExcludeFilterValues) {
+					assertFilterMatch(index);
+				}
 			} else if (isValMatches) {
 				assertFilterMatch(index);
 			}
@@ -950,25 +980,21 @@ public class RulesImpl implements Rules {
 	 */
 	private void validateValuesToFilter(Row row, int index,
 			NarrowDownTo narrowDownTo, FormulaEvaluator evaluator) {
-		String valueToFilter = null;
 		String typeConvertedCellValue = null;
 		int filterColCellType = row.getCell(narrowDownTo.getFilterColIndex())
 				.getCellType();
 		typeConvertedCellValue = typeConvertCellValue(row, narrowDownTo,
 				filterColCellType, evaluator);
-		if (narrowDownTo.getValuesToFilter().size() == 1) {
-			valueToFilter = narrowDownTo.getValuesToFilter().get(0);
-			if (valueToFilter.contains(DashboardConstants.BLANK_CELL_STR)) {
-				proceedBlankCellValidation(index, valueToFilter,
-						filterColCellType);
-			} else {
-				proceedNonBlankCellValidation(index, typeConvertedCellValue,
-						valueToFilter);
-			}
-		} else {
-			if (narrowDownTo.getValuesToFilter().contains(
-					typeConvertedCellValue)) {
-				assertFilterMatch(index);
+		for (String filterValue : narrowDownTo.getValuesToFilter()) {
+			if (!isRowMatchesWithFilter()) {
+				if (filterValue.contains(DashboardConstants.BLANK_CELL_STR)
+						&& !filterValue.contains(",")) {
+					proceedBlankCellValidation(index, filterValue,
+							filterColCellType);
+				} else {
+					proceedNonBlankCellValidation(index,
+							typeConvertedCellValue, filterValue);
+				}
 			}
 		}
 	}
