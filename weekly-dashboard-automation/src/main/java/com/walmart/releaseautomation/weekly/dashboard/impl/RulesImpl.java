@@ -210,7 +210,7 @@ public class RulesImpl implements Rules {
 					/*
 					 * Cell Value should match all mentioned excluded values and
 					 * it should be any of other excluded value too.
-					 */ 
+					 */
 					if (!isValMatches
 							&& !Arrays.asList(notInFilterValues).contains(
 									"!" + typeConvertedCellValue)) {
@@ -938,11 +938,16 @@ public class RulesImpl implements Rules {
 						eachEvalColIndex));
 			}
 			if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-					.getCellType() != null
-					&& rule.getEvaluateFormula().getCell()[eachEvalColIndex]
-							.getCellType().equalsIgnoreCase("Date")) {
-				cell.setCellValue(new Date());
-				cell.setCellStyle(dateCellStyle);
+					.getCellType() != null) {
+				if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+						.getCellType().equalsIgnoreCase("Date")) {
+					cell.setCellValue(new Date());
+					cell.setCellStyle(dateCellStyle);
+				} else if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
+						.getCellType().equalsIgnoreCase("Number")) {
+					cell.setCellValue(0d);
+				}
+
 			}
 			if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
 					.getAddRefLinks() != null

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listContainer>
 	<items>
-<!--  	<rule>
+ 	<rule>
 		<executeMacro>
 			<onFile>Daily_Release_Dashboard.xlsm</onFile>
 			<scriptName>makeMiniVersionCopyOfDashboardSheet.vbs</scriptName>
@@ -103,7 +103,7 @@
 				<valueToUpdate>*</valueToUpdate>
 			</update>
 		</updates>
-	</rule>-->
+	</rule>
 	
 	<rule>
 		<executeMacro>
@@ -134,6 +134,7 @@
 			<cell>
 				<header>RCA Age</header>
 				<formula>NOW()-D3-1</formula>
+				<cellType>Number</cellType>
 			</cell>
 		</evaluateFormula>
 		<type>EvaluateFormula</type>
@@ -162,6 +163,7 @@
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
+	
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
@@ -173,13 +175,13 @@
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
 			<scriptName>saveFileInDiffExtension.vbs</scriptName>
-			<macroName>saveAsXlsx</macroName>
-			<params>Mini_Dashboard.xls</params>
+			<macroName>saveAsXls</macroName>
 			<params>Mini_Dashboard.xlsx</params>
+			<params>Mini_Dashboard.xls</params>
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
-	<!--
+
 	<rule>
 		<filter>
 			<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -189,7 +191,7 @@
 					<colToFilter>Created Date</colToFilter>
 					<filterColADate>true</filterColADate>
 					<values>
-						<valuesToFilter>>today-23</valuesToFilter>
+						<valuesToFilter>>today-27</valuesToFilter>
 					</values>
 				</narrowDownTo>
 			</narrowDownTos>
@@ -989,8 +991,8 @@
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
-		
-	<rule>
+	
+	<!-- <rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
 			<scriptName>saveFileInDiffExtension.vbs</scriptName>
@@ -1206,6 +1208,6 @@
 				</bind>
 			</binds>
 		</rule>
-	 --></items>
+ -->	 </items>
 </listContainer>
 
