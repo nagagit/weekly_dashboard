@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -48,7 +49,8 @@ public class RulesImpl implements Rules {
 	private Rule rule;
 	private List<Integer> toEvalColIndexes;
 	private boolean wbChanged;
-	private boolean rowMatchesWithFilter;
+	private boolean colMatchesWithFilter;
+	private int filtersPassCnt;
 	private boolean[] filterResults;
 	public static DataFormatter dataFormatter = new DataFormatter();
 
@@ -79,11 +81,11 @@ public class RulesImpl implements Rules {
 
 		for (Update update : updates) {
 			for (Row row : filterSheet) {
-				int index = 0;
 				if (row.getRowNum() > 0) {
+					setFiltersPassCnt(0);
 					for (NarrowDownTo narrowDownTo : filter.getNarrowDownTo()) {
 						String valueToFilter = null;
-						setRowMatchesWithFilter(Boolean.FALSE);
+						setColMatchesWithFilter(Boolean.FALSE);
 						if (row.getCell(narrowDownTo.getFilterColIndex()) != null) {
 							if (rule.getCount() != null
 									&& rule.getCount().isStoreCountInMap()
@@ -101,18 +103,20 @@ public class RulesImpl implements Rules {
 								if (row.getCell(
 										narrowDownTo.getFilterColIndex())
 										.getDateCellValue().after(createdDate)) {
-									assertFilterMatch(index);
+									assertFilterMatch();
 									getPriority(row, storeCountMap,
 											narrowDownTo);
 								}
 							} else {
-								validateValuesToFilter(row, index,
-										narrowDownTo, evaluator);
+								validateValuesToFilter(row, narrowDownTo,
+										evaluator);
 							}
 
 						}
 					}
-					if (isRowMatchesWithFilter()) {
+					if (getFiltersPassCnt() > 0
+							&& getFiltersPassCnt() == filter.getNarrowDownTo()
+									.size()) {
 						setCellValue(row, update, evaluator);
 					}
 				}
@@ -190,19 +194,18 @@ public class RulesImpl implements Rules {
 	}
 
 	/**
-	 * @param index
 	 * @param typeConvertedCellValue
 	 * @param valueToFilter
 	 */
-	private void proceedNonBlankCellValidation(int index,
-			String typeConvertedCellValue, String valueToFilter) {
+	private void proceedNonBlankCellValidation(String typeConvertedCellValue,
+			String valueToFilter) {
 		boolean isValMatches = false;
 		boolean isValNotMatchesAllExcludeFilterValues = false;
 		if (!valueToFilter.contains("*")) {
 			String[] notInFilterValues = null;
 			isValMatches = valueToFilter
 					.equalsIgnoreCase(typeConvertedCellValue);
-			if (valueToFilter.contains("!") && valueToFilter.contains(",")) {
+			if (valueToFilter.contains("!")) {
 				notInFilterValues = valueToFilter.split(",");
 				for (int i = 0; i < notInFilterValues.length; i++) {
 					isValMatches = notInFilterValues[i].replace("!", "")
@@ -228,32 +231,31 @@ public class RulesImpl implements Rules {
 					}
 				}
 				if (isValNotMatchesAllExcludeFilterValues) {
-					assertFilterMatch(index);
+					assertFilterMatch();
 				}
 			} else if (isValMatches) {
-				assertFilterMatch(index);
+				assertFilterMatch();
 			}
 		} else {
 			boolean isValContains = typeConvertedCellValue
 					.contains(valueToFilter.replace("*", ""));
 			if (isValContains) {
-				assertFilterMatch(index);
+				assertFilterMatch();
 			}
 		}
 	}
 
 	/**
-	 * @param index
 	 * @param valueToFilter
 	 * @param filterColCellType
 	 */
-	private void proceedBlankCellValidation(int index, String valueToFilter,
+	private void proceedBlankCellValidation(String valueToFilter,
 			int filterColCellType) {
 		if (!valueToFilter.contains("!")) {
-			assertFilterMatch(index);
+			assertFilterMatch();
 		} else {
 			if (filterColCellType != Cell.CELL_TYPE_BLANK) {
-				assertFilterMatch(index);
+				assertFilterMatch();
 			}
 		}
 	}
@@ -403,13 +405,8 @@ public class RulesImpl implements Rules {
 	/**
 	 * @param index
 	 */
-	private void assertFilterMatch(int index) {
-		if (index != 0) {
-			setRowMatchesWithFilter(isRowMatchesWithFilter() && Boolean.TRUE);
-		} else {
-			setRowMatchesWithFilter(Boolean.TRUE);
-		}
-		index++;
+	private void assertFilterMatch() {
+		setFiltersPassCnt(getFiltersPassCnt() + 1);
 	}
 
 	private void getPriority(Row row, Map<Date, List<Integer>> storeCountMap,
@@ -480,18 +477,28 @@ public class RulesImpl implements Rules {
 		}
 		if (update.getValueToUpdate().equals("*")
 				&& rule.getFilter().getNarrowDownTo().size() == 1) {
+			/*
+			 * We have here for loop, but der will be one narrowDownTo for
+			 * valuetoUpdate having '*'
+			 */
 			for (NarrowDownTo narrowDownTo : rule.getFilter().getNarrowDownTo()) {
 				if (row.getCell(update.getUpdateColIndex()) == null) {
 					Cell cell = row.createCell(update.getUpdateColIndex());
+					row.getCell(update.getUpdateColIndex()).setCellType(
+							row.getCell(narrowDownTo.getFilterColIndex())
+									.getCellType());
 				}
 				row.getCell(update.getUpdateColIndex()).setCellType(
-						row.getCell(narrowDownTo.getFilterColIndex())
-								.getCellType());
+						Cell.CELL_TYPE_STRING);
 				row.getCell(update.getUpdateColIndex()).setCellValue(
 						row.getCell(narrowDownTo.getFilterColIndex())
 								.getStringCellValue());
-				dataFormatter.formatCellValue(row.getCell(update
-						.getUpdateColIndex()));
+				/*
+				 * try { dataFormatter.formatCellValue(row.getCell(update
+				 * .getUpdateColIndex())); } catch
+				 * (java.lang.IllegalArgumentException e) {
+				 * System.out.println("EXCEPTION - " + e.getMessage()); }
+				 */
 			}
 		} else {
 			if (row.getCell(update.getUpdateColIndex()) == null) {
@@ -667,6 +674,10 @@ public class RulesImpl implements Rules {
 		short df = evalFrmWB.createDataFormat().getFormat("dd-MM-yyyy");
 		dateCellStyle.setDataFormat(df);
 
+		HSSFCellStyle numberCellStyle = evalFrmWB.createCellStyle();
+		DataFormat dataFormat = evalFrmWB.createDataFormat();
+		numberCellStyle.setDataFormat(dataFormat.getFormat("0"));
+
 		for (Row row : sheet) {
 			if (row.getRowNum() == 0) {
 				rowBrkCheckColIndex = getRowBrkFilterColIndex(row, "Defect ID");
@@ -679,7 +690,8 @@ public class RulesImpl implements Rules {
 			} else {
 				evaluator = evalFrmWB.getCreationHelper()
 						.createFormulaEvaluator();
-				evaluateCells(rule, evaluator, row, dateCellStyle);
+				evaluateCells(rule, evaluator, row, dateCellStyle,
+						numberCellStyle);
 			}
 		}
 		setToEvalColIndexes(null);
@@ -843,21 +855,6 @@ public class RulesImpl implements Rules {
 	}
 
 	/**
-	 * @return the rowMatchesWithFilter
-	 */
-	public boolean isRowMatchesWithFilter() {
-		return rowMatchesWithFilter;
-	}
-
-	/**
-	 * @param rowMatchesWithFilter
-	 *            the rowMatchesWithFilter to set
-	 */
-	public void setRowMatchesWithFilter(boolean rowMatchesWithFilter) {
-		this.rowMatchesWithFilter = rowMatchesWithFilter;
-	}
-
-	/**
 	 * @return the filterResults
 	 */
 	public boolean[] getFilterResults() {
@@ -885,24 +882,29 @@ public class RulesImpl implements Rules {
 		HSSFCellStyle dateCellStyle = filterWorkbook.createCellStyle();
 		short df = filterWorkbook.createDataFormat().getFormat("dd-MM-yyyy");
 		dateCellStyle.setDataFormat(df);
+
+		HSSFCellStyle numberCellStyle = filterWorkbook.createCellStyle();
+		DataFormat dataFormat = filterWorkbook.createDataFormat();
+		numberCellStyle.setDataFormat(dataFormat.getFormat("0"));
+
 		for (Row row : filterSheet) {
 			bindFilterAndRowCntColIndexes(rule, filter, row);
 			bindEvalColIndexes(rule, row);
 			break;
 		}
 		for (Row row : filterSheet) {
-			int index = 0;
 			if (row.getRowNum() > 0) {
+				setFiltersPassCnt(0);
 				for (NarrowDownTo narrowDownTo : filter.getNarrowDownTo()) {
-					setRowMatchesWithFilter(Boolean.FALSE);
+					setColMatchesWithFilter(Boolean.FALSE);
 					if (row.getCell(narrowDownTo.getFilterColIndex()) != null) {
-						validateValuesToFilter(row, index, narrowDownTo,
-								evaluator);
+						validateValuesToFilter(row, narrowDownTo, evaluator);
 					}
 				}
-				if (isRowMatchesWithFilter()) {
+				if (getFiltersPassCnt() == filter.getNarrowDownTo().size()) {
 					// Evaluate Here
-					evaluateCells(rule, evaluator, row, dateCellStyle);
+					evaluateCells(rule, evaluator, row, dateCellStyle,
+							numberCellStyle);
 				}
 			}
 		}
@@ -919,10 +921,12 @@ public class RulesImpl implements Rules {
 	 * @param evaluator
 	 * @param row
 	 * @param dateCellStyle
+	 * @param numberCellStyle
 	 * @throws IOException
 	 */
 	private void evaluateCells(Rule rule, FormulaEvaluator evaluator, Row row,
-			HSSFCellStyle dateCellStyle) throws IOException {
+			HSSFCellStyle dateCellStyle, HSSFCellStyle numberCellStyle)
+			throws IOException {
 		HSSFWorkbook refWb = null;
 		FormulaEvaluator refWbFormulaEvaluator = null;
 		Map<String, FormulaEvaluator> evaluators = new HashMap<String, FormulaEvaluator>();
@@ -945,7 +949,9 @@ public class RulesImpl implements Rules {
 					cell.setCellStyle(dateCellStyle);
 				} else if (rule.getEvaluateFormula().getCell()[eachEvalColIndex]
 						.getCellType().equalsIgnoreCase("Number")) {
+					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 					cell.setCellValue(0d);
+					cell.setCellStyle(numberCellStyle);
 				}
 
 			}
@@ -978,27 +984,25 @@ public class RulesImpl implements Rules {
 
 	/**
 	 * @param row
-	 * @param index
 	 * @param typeConvertedCellValue
 	 * @param narrowDownTo
 	 * @param evaluator
 	 */
-	private void validateValuesToFilter(Row row, int index,
-			NarrowDownTo narrowDownTo, FormulaEvaluator evaluator) {
+	private void validateValuesToFilter(Row row, NarrowDownTo narrowDownTo,
+			FormulaEvaluator evaluator) {
 		String typeConvertedCellValue = null;
 		int filterColCellType = row.getCell(narrowDownTo.getFilterColIndex())
 				.getCellType();
 		typeConvertedCellValue = typeConvertCellValue(row, narrowDownTo,
 				filterColCellType, evaluator);
 		for (String filterValue : narrowDownTo.getValuesToFilter()) {
-			if (!isRowMatchesWithFilter()) {
+			if (!isColMatchesWithFilter()) {
 				if (filterValue.contains(DashboardConstants.BLANK_CELL_STR)
 						&& !filterValue.contains(",")) {
-					proceedBlankCellValidation(index, filterValue,
-							filterColCellType);
+					proceedBlankCellValidation(filterValue, filterColCellType);
 				} else {
-					proceedNonBlankCellValidation(index,
-							typeConvertedCellValue, filterValue);
+					proceedNonBlankCellValidation(typeConvertedCellValue,
+							filterValue);
 				}
 			}
 		}
@@ -1019,6 +1023,36 @@ public class RulesImpl implements Rules {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @return the colMatchesWithFilter
+	 */
+	public boolean isColMatchesWithFilter() {
+		return colMatchesWithFilter;
+	}
+
+	/**
+	 * @param colMatchesWithFilter
+	 *            the colMatchesWithFilter to set
+	 */
+	public void setColMatchesWithFilter(boolean colMatchesWithFilter) {
+		this.colMatchesWithFilter = colMatchesWithFilter;
+	}
+
+	/**
+	 * @return the filtersPassCnt
+	 */
+	public int getFiltersPassCnt() {
+		return filtersPassCnt;
+	}
+
+	/**
+	 * @param filtersPassCnt
+	 *            the filtersPassCnt to set
+	 */
+	public void setFiltersPassCnt(int filtersPassCnt) {
+		this.filtersPassCnt = filtersPassCnt;
 	}
 
 }

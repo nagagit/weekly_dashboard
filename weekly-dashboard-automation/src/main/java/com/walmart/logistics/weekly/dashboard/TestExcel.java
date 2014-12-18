@@ -46,24 +46,14 @@ public class TestExcel {
 
 	private static void mockMapValues() {
 		DashboardConstants.wbURLMap.put("Mini_Dashboard",
-				"C:/Users/l.naga rajesh/Documents/" + "Mini_Dashboard.xls");
-		DashboardConstants.wbURLMap.put("Mini_Dashboard_lastWk",
-				"C:/Users/l.naga rajesh/Documents/"
-						+ "Mini_Dashboard_lastWk.xls");
+				"C:/Users/264314/Documents/" + "Mini_Dashboard.xls");
 		DashboardConstants.wbURLMap.put("DefectsReport",
-				"C:/Users/l.naga rajesh/Documents/DefectsReport.xls");
+				"C:/Users/264314/Documents/DefectsReport.xls");
 		DashboardConstants.wbURLMap
 				.put("Daily_Release_Dashboard",
-						"C:/Users/l.naga rajesh/Documents/Daily_Release_Dashboard.xlsm");
-		DashboardConstants.wbURLMap
-				.put("Daily_Release_Dashboard_lastWk",
-						"C:/Users/l.naga rajesh/Documents/Daily_Release_Dashboard_lastWk.xlsm");
+						"C:/Users/264314/Documents/Daily_Release_Dashboard.xlsm");
 		DashboardConstants.wbURLMap.put("PMO Only",
-				"C:/Users/l.naga rajesh/Documents/PMO Only.xls");
-		DashboardConstants.wbURLMap.put("LOE_Tracker",
-				"C:/Users/l.naga rajesh/Documents/LOE_Tracker.xls");
-		DashboardConstants.wbURLMap.put("Business Priority CRs Defects",
-				"C:/Users/l.naga rajesh/Documents/Business Priority CRs Defects.xls");
+				"C:/Users/264314/Documents/PMO Only.xls");
 	}
 
 	public void readFromExcel() throws IOException, JAXBException,
@@ -109,6 +99,9 @@ public class TestExcel {
 			System.out.println("*****************COMPLETED**************" );
 			System.out.println(rule.toString());
 			ruleIndex = ruleIndex + 1;
+			System.out.println("Sleep Starts");
+			Thread.sleep(2000);
+			System.out.println("Sleep Ends");
 		}
 	}
 

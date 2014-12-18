@@ -70,5 +70,13 @@ public class Cell {
 		this.addRefLinks = addRefLinks;
 	}
 
-
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Cell [header=" + header + ", formula=" + formula
+				+ ", cellType=" + cellType + ", addRefLinks=" + addRefLinks
+				+ "]";
+	}
 }
