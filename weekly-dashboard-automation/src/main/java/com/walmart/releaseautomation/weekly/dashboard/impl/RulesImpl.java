@@ -98,6 +98,9 @@ public class RulesImpl implements Rules {
 									calendar.add(Calendar.DATE,
 											-Integer.parseInt(valueToFilter
 													.split("-")[1]));
+									calendar.set(Calendar.HOUR, 0);
+									calendar.set(Calendar.MINUTE, 0);
+									calendar.set(Calendar.SECOND, 0);
 									createdDate = calendar.getTime();
 								}
 								if (row.getCell(
@@ -123,7 +126,6 @@ public class RulesImpl implements Rules {
 			}
 		}
 
-		// fsadfakfj;lk
 		filterWorkbook = weeklyRunRateSpecialTask(rule, filter, storeCountMap,
 				filterWorkbook);
 		if (isWbChanged()) {
@@ -166,15 +168,22 @@ public class RulesImpl implements Rules {
 			int prioritySum = 0;
 			int lastRow = countOnSheet.getLastRowNum();
 			for (Date createDate : storeCountMap.keySet()) {
-				row = countOnSheet.createRow(lastRow++);
-				dateCell = row.createCell(0);
-				dateCell.setCellValue(createDate);
-				// binds the Date style
-				HSSFCellStyle dateCellStyle = filterWorkbook.createCellStyle();
-				short df = filterWorkbook.createDataFormat().getFormat(
-						"dd-MM-yyyy");
-				dateCellStyle.setDataFormat(df);
-				dateCell.setCellStyle(dateCellStyle);
+				row = countOnSheet.getRow(lastRow);
+				if (row == null
+						|| (!row.getCell(0).getDateCellValue()
+								.equals(createDate) && lastRow == countOnSheet
+								.getLastRowNum())) {
+					row = countOnSheet.createRow(lastRow);
+					dateCell = row.createCell(0);
+					dateCell.setCellValue(createDate);
+					// binds the Date style
+					HSSFCellStyle dateCellStyle = filterWorkbook
+							.createCellStyle();
+					short df = filterWorkbook.createDataFormat().getFormat(
+							"dd-MM-yyyy");
+					dateCellStyle.setDataFormat(df);
+					dateCell.setCellStyle(dateCellStyle);
+				}
 				highPriority = row.createCell(1);
 				highPriority.setCellValue(storeCountMap.get(createDate).get(0));
 				mediumPriority = row.createCell(2);
@@ -188,6 +197,7 @@ public class RulesImpl implements Rules {
 						+ mediumPriority.getNumericCellValue() + lowPriority
 						.getNumericCellValue());
 				totalPriorityCnt.setCellValue(prioritySum);
+				lastRow++;
 			}
 		}
 		return filterWorkbook;
@@ -201,22 +211,25 @@ public class RulesImpl implements Rules {
 			String valueToFilter) {
 		boolean isValMatches = false;
 		boolean isValNotMatchesAllExcludeFilterValues = false;
+		List<String> notInFilterValues = null;
 		if (!valueToFilter.contains("*")) {
-			String[] notInFilterValues = null;
 			isValMatches = valueToFilter
 					.equalsIgnoreCase(typeConvertedCellValue);
 			if (valueToFilter.contains("!")) {
-				notInFilterValues = valueToFilter.split(",");
-				for (int i = 0; i < notInFilterValues.length; i++) {
-					isValMatches = notInFilterValues[i].replace("!", "")
+				notInFilterValues = new ArrayList<String>();
+				for (String value : valueToFilter.split(",")) {
+					notInFilterValues.add(value.toLowerCase());
+				}
+				for (int i = 0; i < notInFilterValues.size(); i++) {
+					isValMatches = notInFilterValues.get(i).replace("!", "")
 							.equalsIgnoreCase(typeConvertedCellValue);
 					/*
 					 * Cell Value should match all mentioned excluded values and
 					 * it should be any of other excluded value too.
 					 */
 					if (!isValMatches
-							&& !Arrays.asList(notInFilterValues).contains(
-									"!" + typeConvertedCellValue)) {
+							&& !notInFilterValues.contains(
+									"!" + typeConvertedCellValue.toLowerCase())) {
 						if (i != 0) {
 							isValNotMatchesAllExcludeFilterValues = isValNotMatchesAllExcludeFilterValues && true;
 						} else {
@@ -237,8 +250,8 @@ public class RulesImpl implements Rules {
 				assertFilterMatch();
 			}
 		} else {
-			boolean isValContains = typeConvertedCellValue
-					.contains(valueToFilter.replace("*", ""));
+			boolean isValContains = typeConvertedCellValue.toLowerCase()
+					.contains(valueToFilter.replace("*", "").toLowerCase());
 			if (isValContains) {
 				assertFilterMatch();
 			}
@@ -310,8 +323,9 @@ public class RulesImpl implements Rules {
 			int cellType) {
 		String tempConvertedCellValue = "";
 		if (cellType == Cell.CELL_TYPE_NUMERIC) {
-			tempConvertedCellValue = String.valueOf(row.getCell(
-					narrowDownTo.getFilterColIndex()).getNumericCellValue());
+			Double doubleValue = row.getCell(
+					narrowDownTo.getFilterColIndex()).getNumericCellValue();
+			tempConvertedCellValue = String.valueOf(doubleValue.intValue());
 		} else if (cellType == Cell.CELL_TYPE_BOOLEAN) {
 			tempConvertedCellValue = String.valueOf(row.getCell(
 					narrowDownTo.getFilterColIndex()).getBooleanCellValue());
@@ -333,7 +347,7 @@ public class RulesImpl implements Rules {
 			for (Cell cell : row) {
 				String tempCell = update.getColToUpdate().replace("^", "");
 				if (updateColIndex == -1) {
-					if (cell.getStringCellValue().equals(tempCell)) {
+					if (cell.getStringCellValue().equalsIgnoreCase(tempCell)) {
 						updateColIndex = cell.getColumnIndex();
 					} else if (cell.getColumnIndex() + 1 == row
 							.getPhysicalNumberOfCells()
@@ -361,14 +375,14 @@ public class RulesImpl implements Rules {
 		for (NarrowDownTo narrowDownTo : filter.getNarrowDownTo()) {
 			for (Cell cell : row) {
 				if (filterColIndex == -1
-						&& cell.getStringCellValue().equals(
+						&& cell.getStringCellValue().equalsIgnoreCase(
 								narrowDownTo.getColToFilter())) {
 					filterColIndex = cell.getColumnIndex();
 				}
 
 				if (rowCountColIndex == -1
 						&& rule.getCount() != null
-						&& cell.getStringCellValue().equals(
+						&& cell.getStringCellValue().equalsIgnoreCase(
 								rule.getCount().getCountFromCol())) {
 					rowCountColIndex = cell.getColumnIndex();
 				}
@@ -392,7 +406,7 @@ public class RulesImpl implements Rules {
 		int colIndex = -1;
 		for (Cell cell : row) {
 			if (colIndex == -1) {
-				if (cell.getStringCellValue().equals(header)) {
+				if (cell.getStringCellValue().equalsIgnoreCase(header)) {
 					colIndex = cell.getColumnIndex();
 				}
 			} else {
@@ -423,10 +437,10 @@ public class RulesImpl implements Rules {
 					.getStringCellValue().toLowerCase().contains(high)) {
 				priorities.set(0, priorities.get(0) + 1);
 			} else if (row.getCell(rule.getCount().getRowCountColIndex())
-					.getStringCellValue().contains(medium)) {
+					.getStringCellValue().toLowerCase().contains(medium)) {
 				priorities.set(1, priorities.get(1) + 1);
 			} else if (row.getCell(rule.getCount().getRowCountColIndex())
-					.getStringCellValue().contains(low)) {
+					.getStringCellValue().toLowerCase().contains(low)) {
 				priorities.set(2, priorities.get(2) + 1);
 			}
 		} else {
@@ -680,7 +694,8 @@ public class RulesImpl implements Rules {
 
 		for (Row row : sheet) {
 			if (row.getRowNum() == 0) {
-				rowBrkCheckColIndex = getRowBrkFilterColIndex(row, "Defect ID");
+				rowBrkCheckColIndex = getRowBrkFilterColIndex(row,
+						"Created Date");
 			}
 			if (row.getCell(rowBrkCheckColIndex) == null) {
 				break;
@@ -1017,7 +1032,7 @@ public class RulesImpl implements Rules {
 			Cell cell = null;
 			for (Iterator<Cell> iterator = row.iterator(); iterator.hasNext();) {
 				cell = iterator.next();
-				if (cell.getStringCellValue().equals(
+				if (cell.getStringCellValue().equalsIgnoreCase(
 						rule.getEvaluateFormula().getCell()[eval].getHeader())) {
 					getToEvalColIndexes().add(cell.getColumnIndex());
 				}

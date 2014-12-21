@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listContainer>
 	<items>
- 	<rule>
+<!--  	<rule>
 		<executeMacro>
 			<onFile>Daily_Release_Dashboard.xlsm</onFile>
 			<scriptName>makeMiniVersionCopyOfDashboardSheet.vbs</scriptName>
@@ -31,7 +31,7 @@
 			</update>
 		</updates>
 	</rule>
-	<!--
+	
 	<rule>
 		<filter>
 			<fileToFilter>DefectsReport.xls</fileToFilter>
@@ -53,7 +53,7 @@
 			</update>
 		</updates>
 	</rule> 
-	
+ 
 	<rule>
 		<filter>
 			<fileToFilter>DefectsReport.xls</fileToFilter>
@@ -62,15 +62,18 @@
 				<narrowDownTo>
 					<colToFilter>Team</colToFilter>
 					<values>
-						<valuesToFilter>*ISD*</valuesToFilter>
+						<valuesToFilter>ISD</valuesToFilter>
 						<valuesToFilter>*eDC*</valuesToFilter>
 						<valuesToFilter>WFM</valuesToFilter>
 						<valuesToFilter>*Upstreaming*</valuesToFilter>
-						<valuesToFilter>*Japan*</valuesToFilter>
+						<valuesToFilter>Japan</valuesToFilter>
 						<valuesToFilter>YMS</valuesToFilter>
 						<valuesToFilter>GLS-Unified</valuesToFilter>
+						<valuesToFilter>NextGen</valuesToFilter>
+						<valuesToFilter>SKU Growth</valuesToFilter>
+						<valuesToFilter>USG MHE</valuesToFilter>
 						<valuesToFilter>Global Automation</valuesToFilter>
-						<valuesToFilter>*USG*</valuesToFilter>
+						<valuesToFilter>RMT</valuesToFilter>
 					</values>
 				</narrowDownTo>
 			</narrowDownTos>
@@ -83,6 +86,8 @@
 			</update>
 		</updates>
 	</rule>
+	
+	
 	
 	<rule>
 		<filter>
@@ -106,10 +111,18 @@
 		</updates>
 	</rule>
 	
+	
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
 			<scriptName>copyLookup.vbs</scriptName>
+		</executeMacro>
+		<type>ExecuteMacro</type>
+	</rule>
+	<rule>
+		<executeMacro>
+			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
+			<scriptName>copyBase.vbs</scriptName>
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
@@ -122,7 +135,9 @@
 			<params>Mini_Dashboard.xls</params>
 		</executeMacro>
 		<type>ExecuteMacro</type>
-	</rule>  
+	</rule>
+	
+	  
 	<rule>
 		<evaluateFormula>
 			<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -140,6 +155,7 @@
 		</evaluateFormula>
 		<type>EvaluateFormula</type>
 	</rule>
+	
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
@@ -154,13 +170,6 @@
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
 			<scriptName>deleteData.vbs</scriptName>
-		</executeMacro>
-		<type>ExecuteMacro</type>
-	</rule>
-	<rule>
-		<executeMacro>
-			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
-			<scriptName>copyBase.vbs</scriptName>
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
@@ -192,7 +201,7 @@
 					<colToFilter>Created Date</colToFilter>
 					<filterColADate>true</filterColADate>
 					<values>
-						<valuesToFilter>>today-8</valuesToFilter>
+						<valuesToFilter>>today-11</valuesToFilter>
 					</values>
 				</narrowDownTo>
 			</narrowDownTos>
@@ -210,7 +219,8 @@
 			<countForValues>1-High,2-Medium,3-Low</countForValues>
 			<storeCountInMap>true</storeCountInMap>
 		</count>
-	</rule> 		
+	</rule>
+	 		
 		 <rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -232,6 +242,8 @@
 				</update>
 			</updates>
 		</rule>
+		
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -253,6 +265,8 @@
 				</update>
 			</updates>
 		</rule>
+		
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -274,6 +288,8 @@
 				</update>
 			</updates>
 		</rule>
+		
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -294,7 +310,9 @@
 					<valueToUpdate>Global Automation</valueToUpdate>
 				</update>
 			</updates>
-		</rule>				
+		</rule>
+			
+					
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -316,6 +334,7 @@
 				</update>
 			</updates>
 		</rule>
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -324,7 +343,7 @@
 					<narrowDownTo>
 						<colToFilter>Country</colToFilter>
 						<values>
-							<valuesToFilter>eDC</valuesToFilter>
+							<valuesToFilter>*eDC*</valuesToFilter>
 						</values>
 					</narrowDownTo>
 				</narrowDownTos>
@@ -341,6 +360,8 @@
 				</update>
 			</updates>
 		</rule>
+		
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -362,8 +383,8 @@
 					<valueToUpdate>N</valueToUpdate>
 				</update>
 			</updates>
-		</rule>	 
-	
+		</rule>
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -437,6 +458,7 @@
 				</update>
 			</updates>
 		</rule>
+		
 			
 		<rule>
 			<filter>
@@ -475,6 +497,8 @@
 				</update>
 			</updates>
 		</rule>
+		
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -497,7 +521,6 @@
 				</update>
 			</updates>
 		</rule>
-		
 		
 		<rule>
 			<filter>
@@ -529,6 +552,7 @@
 				</cell>
 			</evaluateFormula>
 		</rule>
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -546,8 +570,8 @@
 						<colToFilter>Target Release</colToFilter>
 						<values>
 							<valuesToFilter>2015.2A</valuesToFilter>
-							<valuesToFilter>GLS NextGen</valuesToFilter>
 							<valuesToFilter>2015.2B</valuesToFilter>
+							<valuesToFilter>2015.2C</valuesToFilter>
 						</values>
 					</narrowDownTo>
 				</narrowDownTos>
@@ -560,6 +584,7 @@
 				</update>
 			</updates>
 		</rule>
+		
 		
 		<rule>
 			<filter>
@@ -579,12 +604,6 @@
 							<valuesToFilter>N</valuesToFilter>							
 						</values>
 					</narrowDownTo>
-					<narrowDownTo>
-						<colToFilter>RCA high level status</colToFilter>
-						<values>
-							<valuesToFilter>Blanks</valuesToFilter>
-						</values>
-					</narrowDownTo>
 				</narrowDownTos>
 			</filter> 
 			<type>FilterAndEvaluate</type>
@@ -593,11 +612,12 @@
 				<fromSheet>Daily Data</fromSheet>
 				<cell>
 					<header>RCA Status</header>
-					<formula>+VLOOKUP(C:C,Lookup!$L$1:$M$275,2,0)</formula>
+					<formula>+VLOOKUP(C:C,Lookup!$L$1:$M$369,2,0)</formula>
 					<cellType>String</cellType>
 				</cell>
 			</evaluateFormula>
 		</rule>
+		-->
 		
 		<rule>
 			<filter>
@@ -607,7 +627,7 @@
 					<narrowDownTo>
 						<colToFilter>RCA Status</colToFilter>
 						<values>
-							<valuesToFilter>Potential CR's</valuesToFilter>
+							<valuesToFilter>*Potential CR*</valuesToFilter>
 							<valuesToFilter>Translation</valuesToFilter>
 							<valuesToFilter>Triage to Closure</valuesToFilter>
 						</values>
@@ -622,6 +642,7 @@
 				</update>
 			</updates>
 		</rule>
+		<!--
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
