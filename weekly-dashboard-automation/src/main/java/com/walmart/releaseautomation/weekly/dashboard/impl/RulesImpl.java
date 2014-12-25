@@ -527,7 +527,8 @@ public class RulesImpl implements Rules {
 					dataFormatter.formatCellValue(row.getCell(update
 							.getUpdateColIndex()));
 				} catch (java.lang.IllegalArgumentException e) {
-					System.out.println("EXCEPTION - " + e.getMessage());
+					System.out
+							.println("Error while formatting Cell value - Can be Ignored");
 				}
 
 			}
