@@ -8,7 +8,6 @@ import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,6 +52,22 @@ public class RulesImpl implements Rules {
 	private int filtersPassCnt;
 	private boolean[] filterResults;
 	public static DataFormatter dataFormatter = new DataFormatter();
+	private int rowBrkCheckColIndex = -1;
+
+	/**
+	 * @return the rowBrkCheckColIndex
+	 */
+	public int getRowBrkCheckColIndex() {
+		return rowBrkCheckColIndex;
+	}
+
+	/**
+	 * @param rowBrkCheckColIndex
+	 *            the rowBrkCheckColIndex to set
+	 */
+	public void setRowBrkCheckColIndex(int rowBrkCheckColIndex) {
+		this.rowBrkCheckColIndex = rowBrkCheckColIndex;
+	}
 
 	/**
 	 * Filter-DefectsReport.xls|1|Defect Root
@@ -81,40 +96,43 @@ public class RulesImpl implements Rules {
 
 		for (Update update : updates) {
 			for (Row row : filterSheet) {
-				if (row.getRowNum() > 0) {
+				if (row.getRowNum() == 0) {
+					setRowBrkCheckColIndex(getRowBrkFilterColIndex(row,
+							"Created Date"));
+				} else {
+					if (row.getCell(getRowBrkCheckColIndex()) == null) {
+						break;
+					}
 					setFiltersPassCnt(0);
 					for (NarrowDownTo narrowDownTo : filter.getNarrowDownTo()) {
 						String valueToFilter = null;
 						setColMatchesWithFilter(Boolean.FALSE);
-						if (row.getCell(narrowDownTo.getFilterColIndex()) != null) {
-							if (rule.getCount() != null
-									&& rule.getCount().isStoreCountInMap()
-									&& rule.getCount().getRowCountColIndex() != -1
-									&& narrowDownTo.isFilterColADate()) {
-								valueToFilter = narrowDownTo
-										.getValuesToFilter().get(0);
-								if (createdDate == null) {
-									Calendar calendar = Calendar.getInstance();
-									calendar.add(Calendar.DATE,
-											-Integer.parseInt(valueToFilter
-													.split("-")[1]));
-									calendar.set(Calendar.HOUR, 0);
-									calendar.set(Calendar.MINUTE, 0);
-									calendar.set(Calendar.SECOND, 0);
-									createdDate = calendar.getTime();
-								}
-								if (row.getCell(
-										narrowDownTo.getFilterColIndex())
-										.getDateCellValue().after(createdDate)) {
-									assertFilterMatch();
-									getPriority(row, storeCountMap,
-											narrowDownTo);
-								}
-							} else {
-								validateValuesToFilter(row, narrowDownTo,
-										evaluator);
+						if (row.getCell(narrowDownTo.getFilterColIndex()) == null) {
+							row.createCell(narrowDownTo.getFilterColIndex(),
+									Cell.CELL_TYPE_BLANK);
+						}
+						if (rule.getCount() != null
+								&& rule.getCount().isStoreCountInMap()
+								&& rule.getCount().getRowCountColIndex() != -1
+								&& narrowDownTo.isFilterColADate()) {
+							valueToFilter = narrowDownTo.getValuesToFilter()
+									.get(0);
+							if (createdDate == null) {
+								Calendar calendar = Calendar.getInstance();
+								calendar.add(Calendar.DATE, -Integer
+										.parseInt(valueToFilter.split("-")[1]));
+								calendar.set(Calendar.HOUR, 0);
+								calendar.set(Calendar.MINUTE, 0);
+								calendar.set(Calendar.SECOND, 0);
+								createdDate = calendar.getTime();
 							}
-
+							if (row.getCell(narrowDownTo.getFilterColIndex())
+									.getDateCellValue().after(createdDate)) {
+								assertFilterMatch();
+								getPriority(row, storeCountMap, narrowDownTo);
+							}
+						} else {
+							validateValuesToFilter(row, narrowDownTo, evaluator);
 						}
 					}
 					if (getFiltersPassCnt() > 0
@@ -228,8 +246,8 @@ public class RulesImpl implements Rules {
 					 * it should be any of other excluded value too.
 					 */
 					if (!isValMatches
-							&& !notInFilterValues.contains(
-									"!" + typeConvertedCellValue.toLowerCase())) {
+							&& !notInFilterValues.contains("!"
+									+ typeConvertedCellValue.toLowerCase())) {
 						if (i != 0) {
 							isValNotMatchesAllExcludeFilterValues = isValNotMatchesAllExcludeFilterValues && true;
 						} else {
@@ -323,8 +341,8 @@ public class RulesImpl implements Rules {
 			int cellType) {
 		String tempConvertedCellValue = "";
 		if (cellType == Cell.CELL_TYPE_NUMERIC) {
-			Double doubleValue = row.getCell(
-					narrowDownTo.getFilterColIndex()).getNumericCellValue();
+			Double doubleValue = row.getCell(narrowDownTo.getFilterColIndex())
+					.getNumericCellValue();
 			tempConvertedCellValue = String.valueOf(doubleValue.intValue());
 		} else if (cellType == Cell.CELL_TYPE_BOOLEAN) {
 			tempConvertedCellValue = String.valueOf(row.getCell(
@@ -489,6 +507,9 @@ public class RulesImpl implements Rules {
 		if (isNewUpdCol()) {
 			row.createCell(update.getUpdateColIndex());
 		}
+		if (row.getCell(update.getUpdateColIndex()) == null) {
+			row.createCell(update.getUpdateColIndex());
+		}
 		if (update.getValueToUpdate().equals("*")
 				&& rule.getFilter().getNarrowDownTo().size() == 1) {
 			/*
@@ -496,28 +517,21 @@ public class RulesImpl implements Rules {
 			 * valuetoUpdate having '*'
 			 */
 			for (NarrowDownTo narrowDownTo : rule.getFilter().getNarrowDownTo()) {
-				if (row.getCell(update.getUpdateColIndex()) == null) {
-					Cell cell = row.createCell(update.getUpdateColIndex());
-					row.getCell(update.getUpdateColIndex()).setCellType(
-							row.getCell(narrowDownTo.getFilterColIndex())
-									.getCellType());
-				}
 				row.getCell(update.getUpdateColIndex()).setCellType(
 						Cell.CELL_TYPE_STRING);
 				row.getCell(update.getUpdateColIndex()).setCellValue(
 						row.getCell(narrowDownTo.getFilterColIndex())
 								.getStringCellValue());
-				/*
-				 * try { dataFormatter.formatCellValue(row.getCell(update
-				 * .getUpdateColIndex())); } catch
-				 * (java.lang.IllegalArgumentException e) {
-				 * System.out.println("EXCEPTION - " + e.getMessage()); }
-				 */
+
+				try {
+					dataFormatter.formatCellValue(row.getCell(update
+							.getUpdateColIndex()));
+				} catch (java.lang.IllegalArgumentException e) {
+					System.out.println("EXCEPTION - " + e.getMessage());
+				}
+
 			}
 		} else {
-			if (row.getCell(update.getUpdateColIndex()) == null) {
-				Cell cell = row.createCell(update.getUpdateColIndex());
-			}
 			row.getCell(update.getUpdateColIndex()).setCellType(
 					Cell.CELL_TYPE_STRING);
 			row.getCell(update.getUpdateColIndex()).setCellValue(
@@ -676,7 +690,6 @@ public class RulesImpl implements Rules {
 	}
 
 	public void evaluateFormula(Rule rule) throws IOException {
-		int rowBrkCheckColIndex = 0;
 		HSSFWorkbook evalFrmWB = (HSSFWorkbook) DashboardUtility
 				.getWorkBook(DashboardConstants.wbURLMap.get(rule
 						.getEvaluateFormula().getFileToFilter().split(".x")[0]));
@@ -694,10 +707,10 @@ public class RulesImpl implements Rules {
 
 		for (Row row : sheet) {
 			if (row.getRowNum() == 0) {
-				rowBrkCheckColIndex = getRowBrkFilterColIndex(row,
-						"Created Date");
+				setRowBrkCheckColIndex(getRowBrkFilterColIndex(row,
+						"Created Date"));
 			}
-			if (row.getCell(rowBrkCheckColIndex) == null) {
+			if (row.getCell(getRowBrkCheckColIndex()) == null) {
 				break;
 			}
 			if (getToEvalColIndexes().isEmpty()) {
