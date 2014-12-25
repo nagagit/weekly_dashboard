@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listContainer>
 	<items>
-<!--  	<rule>
+ 	<rule>
 		<executeMacro>
 			<onFile>Daily_Release_Dashboard.xlsm</onFile>
 			<scriptName>makeMiniVersionCopyOfDashboardSheet.vbs</scriptName>
@@ -617,7 +617,7 @@
 				</cell>
 			</evaluateFormula>
 		</rule>
-		-->
+		
 		
 		<rule>
 			<filter>
@@ -642,7 +642,8 @@
 				</update>
 			</updates>
 		</rule>
-		<!--
+		
+		
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -674,6 +675,7 @@
 				</update>
 			</updates>
 		</rule>
+		
 
 		<rule>
 			<filter>
@@ -709,6 +711,7 @@
 			</updates>
 		</rule>
 		
+
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -730,6 +733,7 @@
 				</update>
 			</updates>
 		</rule>
+		
 
 		<rule>
 			<filter>
@@ -763,11 +767,13 @@
 					<valueToUpdate>RCA to be completed</valueToUpdate>
 				</update>
 				<update>
-					<colToUpdate>RCA Status</colToUpdate>
+					<colToUpdate>RCA Grouping</colToUpdate>
 					<valueToUpdate>RCA to be completed</valueToUpdate>
 				</update>
 			</updates>
 		</rule>
+		
+				
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -800,11 +806,12 @@
 					<valueToUpdate>RCA completed</valueToUpdate>
 				</update>
 				<update>
-					<colToUpdate>RCA Status</colToUpdate>
+					<colToUpdate>RCA Grouping</colToUpdate>
 					<valueToUpdate>RCA completed</valueToUpdate>
 				</update>
 			</updates>
-		</rule>		
+		</rule>	
+		
 		
 		<rule>			
 			<filter>
@@ -843,6 +850,7 @@
 				</update>
 			</updates>
 		</rule>
+			
 	
 		<rule>			
 			<filter>
@@ -876,7 +884,7 @@
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
-	
+	<!--
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
