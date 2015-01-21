@@ -73,7 +73,7 @@ public class UI {
 
 		JLabel lblSelectDefectReports = new JLabel(
 				"Select Defect Reports Sheet");
-		lblSelectDefectReports.setBounds(75, 53, 158, 14);
+		lblSelectDefectReports.setBounds(45, 53, 168, 14);
 		frame.getContentPane().add(lblSelectDefectReports);
 
 		textField = new JTextField();
@@ -91,7 +91,7 @@ public class UI {
 		frame.getContentPane().add(btnNewButton);
 
 		JLabel lblNewLabel = new JLabel("Select Dashboard Template");
-		lblNewLabel.setBounds(75, 129, 158, 14);
+		lblNewLabel.setBounds(45, 129, 168, 14);
 		frame.getContentPane().add(lblNewLabel);
 
 		textField_1 = new JTextField();
@@ -109,7 +109,7 @@ public class UI {
 		frame.getContentPane().add(btnNewButton_1);
 
 		JLabel lblNewLabel_1 = new JLabel("Select PMO Only Sheet");
-		lblNewLabel_1.setBounds(75, 211, 158, 14);
+		lblNewLabel_1.setBounds(45, 211, 168, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 
 		textField_2 = new JTextField();

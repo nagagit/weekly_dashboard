@@ -63,8 +63,6 @@
 					<colToFilter>Team</colToFilter>
 					<values>
 						<valuesToFilter>ISD</valuesToFilter>
-						<valuesToFilter>*eDC*</valuesToFilter>
-						<valuesToFilter>WFM</valuesToFilter>
 						<valuesToFilter>*Upstreaming*</valuesToFilter>
 						<valuesToFilter>Japan</valuesToFilter>
 						<valuesToFilter>YMS</valuesToFilter>
@@ -166,6 +164,7 @@
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
+	
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
@@ -181,6 +180,7 @@
 		</executeMacro>
 		<type>ExecuteMacro</type>
 	</rule>
+	
 	<rule>
 		<executeMacro>
 			<onFile>weekly_dashboard_macrobook.xlsb</onFile>
@@ -201,7 +201,7 @@
 					<colToFilter>Created Date</colToFilter>
 					<filterColADate>true</filterColADate>
 					<values>
-						<valuesToFilter>>today-11</valuesToFilter>
+						<valuesToFilter>>today-14</valuesToFilter>
 					</values>
 				</narrowDownTo>
 			</narrowDownTos>
@@ -585,7 +585,7 @@
 			</updates>
 		</rule>
 		
-		
+		 
 		<rule>
 			<filter>
 				<fileToFilter>Mini_Dashboard.xls</fileToFilter>
@@ -830,7 +830,6 @@
 							<valuesToFilter>Japan Gaps</valuesToFilter>
 							<valuesToFilter>Rapid Response</valuesToFilter>
 							<valuesToFilter>Business Continuity</valuesToFilter>
-							<valuesToFilter>WFM</valuesToFilter>
 							<valuesToFilter>USG MHE</valuesToFilter>
 							<valuesToFilter>Global Automation</valuesToFilter>
 							<valuesToFilter>Mexico Perishables</valuesToFilter>
@@ -883,7 +882,7 @@
 			<params>Mini_Dashboard.xlsx</params>
 		</executeMacro>
 		<type>ExecuteMacro</type>
-	</rule>
+	</rule> 
 	<!--
 	<rule>
 		<executeMacro>

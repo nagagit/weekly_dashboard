@@ -97,8 +97,14 @@ public class RulesImpl implements Rules {
 		for (Update update : updates) {
 			for (Row row : filterSheet) {
 				if (row.getRowNum() == 0) {
-					setRowBrkCheckColIndex(getRowBrkFilterColIndex(row,
-							"Created Date"));
+					if (filter.getFileToFilter().equalsIgnoreCase(
+							"DefectsReport.xls")) {
+						setRowBrkCheckColIndex(getRowBrkFilterColIndex(row,
+								"Defect ID"));
+					} else {
+						setRowBrkCheckColIndex(getRowBrkFilterColIndex(row,
+								"Created Date"));
+					}
 				} else {
 					if (row.getCell(getRowBrkCheckColIndex()) == null) {
 						break;
