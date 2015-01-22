@@ -928,12 +928,23 @@ public class RulesImpl implements Rules {
 			break;
 		}
 		for (Row row : filterSheet) {
+			if (row.getRowNum() == 0) {
+				setRowBrkCheckColIndex(getRowBrkFilterColIndex(row,
+						"Created Date"));
+			}
 			if (row.getRowNum() > 0) {
+				if (row.getCell(getRowBrkCheckColIndex()) == null) {
+					break;
+				}
 				setFiltersPassCnt(0);
 				for (NarrowDownTo narrowDownTo : filter.getNarrowDownTo()) {
 					setColMatchesWithFilter(Boolean.FALSE);
 					if (row.getCell(narrowDownTo.getFilterColIndex()) != null) {
 						validateValuesToFilter(row, narrowDownTo, evaluator);
+					} else {
+						doCellValidation(narrowDownTo,
+								DashboardConstants.EMPTY_STRING,
+								Cell.CELL_TYPE_BLANK);
 					}
 				}
 				if (getFiltersPassCnt() == filter.getNarrowDownTo().size()) {
@@ -1030,6 +1041,19 @@ public class RulesImpl implements Rules {
 				.getCellType();
 		typeConvertedCellValue = typeConvertCellValue(row, narrowDownTo,
 				filterColCellType, evaluator);
+		doCellValidation(narrowDownTo, typeConvertedCellValue,
+				filterColCellType);
+	}
+
+	/**
+	 * Method for cell validation
+	 * 
+	 * @param narrowDownTo
+	 * @param typeConvertedCellValue
+	 * @param filterColCellType
+	 */
+	private void doCellValidation(NarrowDownTo narrowDownTo,
+			String typeConvertedCellValue, int filterColCellType) {
 		for (String filterValue : narrowDownTo.getValuesToFilter()) {
 			if (!isColMatchesWithFilter()) {
 				if (filterValue.contains(DashboardConstants.BLANK_CELL_STR)

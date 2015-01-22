@@ -12,6 +12,8 @@ public interface DashboardConstants {
 	public static final String FILTER = "FILTER";
 	public static final String BLANK_CELL_STR = "Blanks";
 	public static final String NOT_OF_BLANK_CELL_STR = "!Blanks";
+	public static final String EMPTY_STRING = "";
+	
 
 	public static enum RULES {
 		FILTERANDUPDATE(1), COPYDATA(2), FORMATCOLUMN(3), EVALUATEFORMULA(4), DELETEDATA(
