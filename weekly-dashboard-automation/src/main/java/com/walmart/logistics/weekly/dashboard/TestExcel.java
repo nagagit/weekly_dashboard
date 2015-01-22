@@ -99,9 +99,9 @@ public class TestExcel {
 			System.out.println("*****************COMPLETED**************" );
 			System.out.println(rule.toString());
 			ruleIndex = ruleIndex + 1;
-			System.out.println("Sleep Starts");
+			//System.out.println("Sleep Starts");
 			Thread.sleep(2000);
-			System.out.println("Sleep Ends");
+			//System.out.println("Sleep Ends");
 		}
 	}
 
